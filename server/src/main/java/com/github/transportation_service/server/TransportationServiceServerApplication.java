@@ -8,6 +8,7 @@ public class TransportationServiceServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TransportationServiceServerApplication.class, args);
+		System.out.println("Server started!");
 	}
 
 }
