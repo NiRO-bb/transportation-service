@@ -8,9 +8,9 @@ public class Route {
     // номер маршрута
     private int id;
     // тип транспорта
-    private Transport transport;
+    private String transport;
     // количество свободных мест
-    private int Places;
+    private int places;
 
     // пункт отправления
     private String departurePoint;
@@ -24,6 +24,22 @@ public class Route {
     private LocalDate arrivalDate;
     private LocalTime arrivalTime;
 
+
+    // constructor
+    public Route(int id, String transport, int places, String departurePoint, String arrivalPoint, LocalDate departureDate, LocalTime departureTime, LocalDate arrivalDate, LocalTime arrivalTime) {
+        this.id = id;
+        this.transport = transport;
+        this.places = places;
+        this.departurePoint = departurePoint;
+        this.arrivalPoint = arrivalPoint;
+        this.departureDate = departureDate;
+        this.departureTime = departureTime;
+        this.arrivalDate = arrivalDate;
+        this.arrivalTime = arrivalTime;
+    }
+
+
+    // getters - setters
     public int getId() {
         return id;
     }
@@ -31,18 +47,18 @@ public class Route {
         this.id = id;
     }
 
-    public Transport getTransport() {
+    public String getTransport() {
         return transport;
     }
-    public void setTransport(Transport transport) {
+    public void setTransport(String transport) {
         this.transport = transport;
     }
 
     public int getPlaces() {
-        return Places;
+        return places;
     }
     public void setPlaces(int places) {
-        Places = places;
+        this.places = places;
     }
 
     public String getDeparturePoint() {

@@ -6,6 +6,15 @@ public class User {
     private String login;
     private String password;
 
+
+    // constructor
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
+
+    // getters - setters
     public String getLogin() {
         return login;
     }
