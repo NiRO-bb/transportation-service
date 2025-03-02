@@ -10,14 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class SearchRouteRepository {
-
-    private String url = "jdbc:sqlite:src/main/resources/transportation_service.db";
-    private Connection connection;
-
-    private Statement s;
-    private PreparedStatement ps;
-    private ResultSet resultSet;
+public class SearchRouteRepository extends Repository {
 
     // получить маршруты согласно заданным параметрам
     public List<Route> searchRoutes(Route route) {

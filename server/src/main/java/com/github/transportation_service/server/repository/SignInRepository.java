@@ -6,14 +6,7 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 
 @Component
-public class SignInRepository {
-
-    private String url = "jdbc:sqlite:src/main/resources/transportation_service.db";
-    private Connection connection;
-
-    private Statement s;
-    private PreparedStatement ps;
-    private ResultSet resultSet;
+public class SignInRepository extends Repository {
 
     // проверить наличие пользователя в базе данных
     public boolean checkUser(User user) {
