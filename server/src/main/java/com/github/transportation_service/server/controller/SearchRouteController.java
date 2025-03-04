@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class SearchRouteController {
 
