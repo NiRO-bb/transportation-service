@@ -22,7 +22,7 @@ public class SearchRouteRepository extends Repository {
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
 
-            String query = "SELECT * FROM ROUTE WHERE DEPARTURE_POINT = '%s' AND ARRIVAL_POINT = '%s'".formatted(route.getDeparturePoint(), route.getArrivalPoint());
+            String query = "SELECT * FROM ROUTE WHERE DEPARTURE_POINT = '%s' AND ARRIVAL_POINT = '%s'".formatted(route.getDeparturePoint().toLowerCase(), route.getArrivalPoint().toLowerCase());
 
             // check transport field
             if (!route.getTransport().equals(""))
@@ -44,8 +44,8 @@ public class SearchRouteRepository extends Repository {
                         resultSet.getInt("ID"),
                         resultSet.getString("TRANSPORT"),
                         resultSet.getInt("PLACES"),
-                        resultSet.getString("DEPARTURE_POINT"),
-                        resultSet.getString("ARRIVAL_POINT"),
+                        resultSet.getString("DEPARTURE_POINT").toUpperCase(),
+                        resultSet.getString("ARRIVAL_POINT").toUpperCase(),
                         LocalDate.parse(resultSet.getString("DEPARTURE_DATE")),
                         LocalTime.parse(resultSet.getString("DEPARTURE_TIME")),
                         LocalDate.parse(resultSet.getString("ARRIVAL_DATE")),
