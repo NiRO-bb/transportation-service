@@ -15,13 +15,13 @@ public class TicketController {
     TicketRepository ticketRepository;
 
     // забронировать билет
-    @PostMapping("/booking")
+    @PostMapping("/ticket/book")
     public void bookTicket(@RequestBody Ticket ticket) {
         ticketRepository.addTicket(ticket);
     }
 
     // получить список забронированных билетов пользователя
-    @PostMapping("/tickets")
+    @PostMapping("/ticket/list")
     public List<Ticket> getTickets(@RequestParam String userLogin) {
 
         List<Ticket> tickets;

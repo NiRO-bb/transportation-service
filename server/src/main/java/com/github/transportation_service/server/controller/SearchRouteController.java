@@ -48,7 +48,7 @@ public class SearchRouteController {
     }
 
     // проверить наличие свободных мест на рейсе
-    @GetMapping("/booking")
+    @GetMapping("/search/place_checking")
     public boolean isTherePlace(@RequestParam int routeId) {
         return searchRouteRepository.checkPlaces(routeId);
     }
