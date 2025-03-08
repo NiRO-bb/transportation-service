@@ -16,14 +16,18 @@ public class SearchRouteController {
     @Autowired
     SearchRouteRepository searchRouteRepository;
 
+    // получить информация о маршруте по id
+    @GetMapping("/search/route_info")
+    public Route getRouteInfo(@RequestParam int routeId) {
+        return searchRouteRepository.getRoute(routeId);
+    }
+
     // получить список маршрутов на определенную дату
     @PostMapping("/search/specific")
     public List<Route> searchSpecific(@RequestBody Route route) {
 
-        List<Route> routes;
-
         // получить список маршрутов из БД на основе введенных параметров
-        routes = searchRouteRepository.searchRoutes(route);
+        List<Route> routes = searchRouteRepository.searchRoutes(route);
 
         // сортировать список маршрутов (по времени)
         Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
@@ -35,10 +39,8 @@ public class SearchRouteController {
     @PostMapping("/search/global")
     public List<Route> searchGlobal(@RequestBody Route route) {
 
-        List<Route> routes;
-
         // получить список маршрутов из БД на основе введенных параметров
-        routes = searchRouteRepository.searchRoutes(route);
+        List<Route> routes = searchRouteRepository.searchRoutes(route);
 
         // сортировать список маршрутов (по времени - датам)
         Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
@@ -47,9 +49,9 @@ public class SearchRouteController {
         return routes;
     }
 
-    // проверить наличие свободных мест на рейсе
+    // проверить количество свободных мест на рейсе
     @GetMapping("/search/place_checking")
-    public boolean isTherePlace(@RequestParam int routeId) {
+    public int isTherePlace(@RequestParam int routeId) {
         return searchRouteRepository.checkPlaces(routeId);
     }
 }

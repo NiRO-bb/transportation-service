@@ -4,35 +4,63 @@
 <head>
     <meta charset="utf-8">
     <title>Поиск билетов</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <form>
+        <h2>Введите данные</h2>
         <!-- Пункт отправления -->
-        <p><input type="text" id="departurePoint" placeholder="Откуда" size="20"></p>
-        <!-- Пункт прибытия -->
-        <p><input type="text" id="arrivalPoint" placeholder="Куда" size="20"></p>
+        <div class="field">
+            <label for="departurePoint">Откуда:</label>
+            <input type="text" id="departurePoint" placeholder="Казань" size="20" required>
+        </div>
 
-        <!-- Дата и время отправления -->
-        <p><input type="text" id="departureDate" placeholder="2005-05-25" size="20"></p>
-        <p><input type="text" id="departureTime" placeholder="12:00" size="20"></p>
+        <!-- Пункт прибытия -->
+        <div class="field">
+            <label for="arrivalPoint">Куда:</label>
+            <input type="text" id="arrivalPoint" placeholder="Москва" size="20" required>
+        </div>
+        
+        <!-- Дата отправления -->
+        <div class="field">
+            <label for="departureDate">Дата:</label>
+            <input type="text" id="departureDate" placeholder="2025-05-25" size="20" pattern="[12][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]">
+        </div>
+        
+        <!-- Время отправления -->
+        <div class="field">
+            <label for="departureTime">Время:</label>
+            <input type="text" id="departureTime" placeholder="12:00" size="20" pattern="[012][0-9]:[0-5][0-9]">
+        </div>
 
         <!-- Вид транспорта -->
-        <p><input list="transportList" type="text" id="transport" placeholder="Вид транспорта"></p>
-        <datalist id="transportList">
-            <option value="BUS">
-            <option value="TRAIN">
-            <option value="AIRPLANE">
-            <option value="MIX">
-        </datalist>
+        <div class="field">
+            <label for="transport">Транспорт:</label>
+            <select id="transport">
+                <option value="">Выберите вид транспорта</option>
+                <option value="Автобус">Автобус</option>
+                <option value="Ж/Д">Ж/Д</option>
+                <option value="Авиа">Авиа</option>
+            </select>
+        </div>
 
         <!-- Кнопка -->
-        <button id="searchButton" type="button">Поиск</button>
+        <div class="buttonContainer">
+            <button id="searchButton" type="button">Найти</button>
+        </div>
+        
         <!-- Поле для данных -->
+        <div id="notification" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>На текущем маршруте нет свободных мест на данный момент.</p>
+            </div>
+        </div>
         <div id="response"></div>
-
-        <!-- Скрипт -->
-        <script src="findRoutes.js"></script>
     </form>
+
+    <!-- Скрипт -->
+    <script src="scripts/findRoutes.js"></script>
 </body>
 </html>

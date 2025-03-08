@@ -1,6 +1,7 @@
 package com.github.transportation_service.server.controller;
 
 import com.github.transportation_service.server.repository.TicketRepository;
+import com.github.transportation_service.server.repository.entity.Route;
 import com.github.transportation_service.server.repository.entity.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
