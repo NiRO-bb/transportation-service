@@ -85,7 +85,7 @@ button.addEventListener('click', () => {
                 .then(response => {
                     if (response.ok) {
                         // уведомление об успешной операции + ссылка на страницу для просмотра забронированных билетов
-                        notification.textContent = 'Билет забронирован!';
+                        notification.innerHTML = 'Билет забронирован! Список забронированных билетов можно посмотреть <a href="/ticketList.html">здесь</a>.';
 
                         return response.text();
                     }  

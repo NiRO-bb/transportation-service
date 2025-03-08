@@ -4,34 +4,45 @@
 <head>
     <meta charset="utf-8">
     <title>Поиск билетов</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
+    <form>
+        <div class="pages">
+            <h2>
+                <!-- Список забронированных билетов -->
+                <a href="ticketList.html">Мои билеты</a>
+                <!-- Регистрация -->
+                <a href="/registration.html">Регистрация</a>
+            </h2>
+        </div>
+    </form>
+
     <form>
         <h2>Введите данные</h2>
         <!-- Пункт отправления -->
         <div class="field">
             <label for="departurePoint">Откуда:</label>
-            <input type="text" id="departurePoint" placeholder="Казань" size="20" required>
+            <input type="text" id="departurePoint" placeholder="Казань" required>
         </div>
 
         <!-- Пункт прибытия -->
         <div class="field">
             <label for="arrivalPoint">Куда:</label>
-            <input type="text" id="arrivalPoint" placeholder="Москва" size="20" required>
+            <input type="text" id="arrivalPoint" placeholder="Москва" required>
         </div>
         
         <!-- Дата отправления -->
         <div class="field">
             <label for="departureDate">Дата:</label>
-            <input type="text" id="departureDate" placeholder="2025-05-25" size="20" pattern="[12][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]">
+            <input type="text" id="departureDate" placeholder="2025-05-25" pattern="[12][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]">
         </div>
         
         <!-- Время отправления -->
         <div class="field">
             <label for="departureTime">Время:</label>
-            <input type="text" id="departureTime" placeholder="12:00" size="20" pattern="[012][0-9]:[0-5][0-9]">
+            <input type="text" id="departureTime" placeholder="12:00" pattern="[012][0-9]:[0-5][0-9]">
         </div>
 
         <!-- Вид транспорта -->
@@ -50,17 +61,19 @@
             <button id="searchButton" type="button">Найти</button>
         </div>
         
-        <!-- Поле для данных -->
+        <!-- Всплывающее окно -->
         <div id="notification" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <p>На текущем маршруте нет свободных мест на данный момент.</p>
             </div>
         </div>
+
+        <!-- Результаты поиска -->
         <div id="response"></div>
     </form>
 
     <!-- Скрипт -->
-    <script src="scripts/findRoutes.js"></script>
+    <script src="/scripts/searchRoutes.js"></script>
 </body>
 </html>

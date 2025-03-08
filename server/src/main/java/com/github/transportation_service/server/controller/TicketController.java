@@ -22,7 +22,7 @@ public class TicketController {
     }
 
     // получить список забронированных билетов пользователя
-    @PostMapping("/ticket/list")
+    @GetMapping("/ticket/list")
     public List<Ticket> getTickets(@RequestParam String userLogin) {
 
         List<Ticket> tickets;

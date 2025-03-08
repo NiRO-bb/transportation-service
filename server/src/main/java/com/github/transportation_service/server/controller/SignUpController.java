@@ -39,7 +39,6 @@ public class SignUpController {
             result = false;
         }
 
-        System.out.println("isCorrect() method:\nuserLogin: '%s'\nresult: '%s'".formatted(user.getLogin(), result));
         return result;
     }
 }

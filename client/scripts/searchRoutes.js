@@ -80,7 +80,7 @@ btn.addEventListener('click', () => {
 
 // вывести результаты запроса
 function displayData(response) {
-    let result = '';
+    let result = '<p><h2>Результаты поиска</h2></p>';
 
     response.forEach(route => {
         result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
@@ -108,7 +108,7 @@ function showRouteDetails(routeId) {
         placeAmount = response;
 
         if (placeAmount > 0) {
-            window.location.href = 'booking.html';
+            window.location.href = '/booking.html';
             localStorage.setItem('routeId', routeId);
         } 
         else {
