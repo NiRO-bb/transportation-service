@@ -17,7 +17,6 @@ btn.addEventListener('click', () => {
 
     // проверить заполнение обязательных полей 
     if (!departurePoint || !arrivalPoint) {
-        console.log(departurePoint, arrivalPoint);
         isValid = false;
         responseField.innerHTML += '<p>Необходимо заполнить поля "Пункт отправления" и "Пункт прибытия"!</p>'; 
     }
@@ -110,9 +109,7 @@ function showRouteDetails(routeId) {
 
         if (placeAmount > 0) {
             window.location.href = 'booking.html';
-    
             localStorage.setItem('routeId', routeId);
-            localStorage.setItem('placeAmount', placeAmount);
         } 
         else {
             // показать уведомление об отсутствии свободных мест на маршруте

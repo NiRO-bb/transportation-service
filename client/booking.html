@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Бронирование билетов</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <form>
+        <h2>Информация о маршруте</h2>
+        <!-- Информация о маршруте -->
+        <div class="field">
+            <div id="routeInfo"></div>
+        </div>
+
+        <h2>Информация о пассажире</h2>
+        <h3>Введите данные</h3>
+        <!-- Информация о пассажире -->
+        <div class="field">
+            <label for="userLogin">Логин:</label>
+            <input type="text" id="userLogin" required>
+        </div>
+        <div class="field">
+            <label for="userPassword">Пароль:</label>
+            <input type="password" id="userPassword" required>
+        </div>
+
+        <!-- Кнопка -->
+        <div class="buttonContainer">
+            <button id="bookingButton" type="button">Забронировать</button>
+        </div>
+        <div id="notification"></div>
+    </form>
+
+    <!-- Скрипт -->
+    <script src="scripts/booking.js"></script>
+</body>
+
+</html>
