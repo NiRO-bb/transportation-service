@@ -1,3 +1,10 @@
+// Вернуться назад
+const exitButton = document.getElementById('exitButton');
+exitButton.addEventListener('click', () => {
+    window.location.href = '/index.html';
+});
+
+// Регистрация
 const notification = document.getElementById('notification');
 notification.textContent = '';
 

@@ -1,3 +1,10 @@
+// Вернуться назад
+const exitButton = document.getElementById('exitButton');
+exitButton.addEventListener('click', () => {
+    window.location.href = '/index.html';
+});
+
+// Получить список билетов
 const textField = document.getElementById('response');
 textField.textContent = '';
 

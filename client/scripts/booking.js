@@ -1,4 +1,10 @@
-// информация о маршруте
+// Вернуться назад
+const exitButton = document.getElementById('exitButton');
+exitButton.addEventListener('click', () => {
+    window.location.href = '/index.html';
+});
+
+// Информация о маршруте
 const routeInfo = document.getElementById('routeInfo');
 let routeId = localStorage.getItem('routeId');
 
