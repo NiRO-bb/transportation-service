@@ -15,7 +15,7 @@
 
         <!-- Логин -->
         <div class="field">
-            <label for="useLogin">Логин:</label>
+            <label for="userLogin">Логин:</label>
             <input type="text" id="userLogin">
         </div>
 
@@ -31,6 +31,14 @@
         </div>
 
         <div id="response"></div>
+
+        <!-- Всплывающее окно -->
+        <div id="notification" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modalMessage"></div>
+            </div>
+        </div>
 
         <!-- Скрипт -->
         <script src="/scripts/ticketList.js"></script>

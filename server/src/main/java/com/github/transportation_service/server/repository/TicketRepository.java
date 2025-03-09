@@ -29,6 +29,29 @@ public class TicketRepository extends Repository{
         }
     }
 
+    // удалить билет из базы данных
+    public boolean removeTicket(int ticketId) {
+        boolean isRemoved = false;
+
+        try {
+            // open connection
+            connection = DriverManager.getConnection(url);
+            ps = connection.prepareStatement("DELETE FROM TICKET WHERE ID = '%s'".formatted(ticketId));
+
+            ps.executeUpdate();
+            isRemoved = true;
+
+            // close connection
+            ps.close();
+            connection.close();
+        }
+        catch (SQLException exception) {
+            System.out.println(exception.getMessage() + " - error caused in TicketRepository.removeTicket() method.");
+        }
+
+        return isRemoved;
+    }
+
     // получить билеты по id пользователя
     public List<Ticket> getUserTickets(String userLogin) {
 

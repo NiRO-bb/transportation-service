@@ -22,6 +22,16 @@ public class SearchRouteController {
         return searchRouteRepository.getRoute(routeId);
     }
 
+    // получить список маршрутов по имени пользователя
+    @GetMapping("/search/route_list")
+    public List<Route> getRouteList(@RequestParam String userLogin) {
+
+        // получить список маршрутов из БД по логину пользователя
+        List<Route> routes = searchRouteRepository.getRouteList(userLogin);
+
+        return routes;
+    }
+
     // получить список маршрутов на определенную дату
     @PostMapping("/search/specific")
     public List<Route> searchSpecific(@RequestBody Route route) {

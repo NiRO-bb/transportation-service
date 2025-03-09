@@ -51,6 +51,43 @@ public class SearchRouteRepository extends Repository {
         return route;
     }
 
+    // получить маршруты по логину пользователя
+    public List<Route> getRouteList(String userLogin) {
+        List<Route> routes = new ArrayList<>();
+
+        try {
+            // open connection
+            connection = DriverManager.getConnection(url);
+            s = connection.createStatement();
+
+            resultSet = s.executeQuery("SELECT ROUTE.* FROM ROUTE JOIN TICKET ON ROUTE.ID = TICKET.ROUTE WHERE TICKET.USER_LOGIN = '%s'".formatted(userLogin));
+
+            while (resultSet.next()) {
+                routes.add(new Route(
+                        resultSet.getInt("ID"),
+                        resultSet.getString("TRANSPORT"),
+                        resultSet.getInt("PLACES"),
+                        resultSet.getString("DEPARTURE_POINT").toUpperCase(),
+                        resultSet.getString("ARRIVAL_POINT").toUpperCase(),
+                        LocalDate.parse(resultSet.getString("DEPARTURE_DATE")),
+                        LocalTime.parse(resultSet.getString("DEPARTURE_TIME")),
+                        LocalDate.parse(resultSet.getString("ARRIVAL_DATE")),
+                        LocalTime.parse(resultSet.getString("ARRIVAL_TIME"))
+                ));
+            }
+
+            // close connection
+            resultSet.close();
+            s.close();
+            connection.close();
+        }
+        catch (SQLException exception) {
+            System.out.println(exception.getMessage() + " - error caused in SearchTicketRepository.getRouteList() method.");
+        }
+
+        return routes;
+    }
+
     // получить маршруты согласно заданным параметрам
     public List<Route> searchRoutes(Route route) {
 
