@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class SearchRouteRepository extends Repository {
 
-    private final long hours = 2; //
+    private final long hours = 2;
 
     // получить маршрут по id
     public Route getRoute(int routeId) {
@@ -147,6 +147,75 @@ public class SearchRouteRepository extends Repository {
         }
         catch (SQLException exception) {
             System.out.println(exception.getMessage() + " - error caused in SearchTicketRepository.searchRoutes() method.");
+        }
+
+        return routes;
+    }
+
+    // получить маршруты по дате
+    public List<Route> getRoutesByDate(String date) {
+        List<Route> routes = new ArrayList<>();
+
+        try {
+            // open connection
+            connection = DriverManager.getConnection(url);
+            s = connection.createStatement();
+
+
+
+            String query = "SELECT * FROM ROUTE WHERE DEPARTURE_DATE = ";
+
+            if (date.length() == 0)
+                query += "(SELECT MIN(DEPARTURE_DATE) FROM ROUTE)";
+            else {
+                query += "'%s'".formatted(LocalDate.parse(date).plusDays(1));
+            }
+
+            resultSet = s.executeQuery(query);
+            while (resultSet.next()) {
+                routes.add(new Route(
+                        resultSet.getInt("ID"),
+                        resultSet.getString("TRANSPORT"),
+                        resultSet.getInt("PLACES"),
+                        resultSet.getString("DEPARTURE_POINT").toUpperCase(),
+                        resultSet.getString("ARRIVAL_POINT").toUpperCase(),
+                        LocalDate.parse(resultSet.getString("DEPARTURE_DATE")),
+                        LocalTime.parse(resultSet.getString("DEPARTURE_TIME")),
+                        LocalDate.parse(resultSet.getString("ARRIVAL_DATE")),
+                        LocalTime.parse(resultSet.getString("ARRIVAL_TIME"))
+                ));
+            }
+
+            // close connection
+            resultSet.close();
+            s.close();
+            connection.close();
+
+            // маршруты не найдены
+            if (routes.isEmpty()) {
+                // open connection
+                connection = DriverManager.getConnection(url);
+                s = connection.createStatement();
+                resultSet = s.executeQuery("SELECT MAX(DEPARTURE_DATE) FROM ROUTE");
+
+                String maxDate = "";
+
+                while (resultSet.next()) {
+                    maxDate = resultSet.getString("MAX(DEPARTURE_DATE)");
+                }
+
+                // close connection
+                resultSet.close();
+                s.close();
+                connection.close();
+
+                if (!LocalDate.parse(maxDate).isBefore(LocalDate.parse(date).plusDays(1))) {
+                    routes = getRoutesByDate(String.valueOf(LocalDate.parse(date).plusDays(1)));
+                }
+            }
+        }
+        catch (SQLException exception) {
+            System.out.println(exception.getMessage() + " - error caused in SearchTicketRepository.getRoutesByDate() method.");
         }
 
         return routes;

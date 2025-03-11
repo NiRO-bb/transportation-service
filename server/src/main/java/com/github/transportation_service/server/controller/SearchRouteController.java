@@ -32,18 +32,18 @@ public class SearchRouteController {
         return routes;
     }
 
-    // получить список маршрутов на определенную дату
-    @PostMapping("/search/specific")
-    public List<Route> searchSpecific(@RequestBody Route route) {
-
-        // получить список маршрутов из БД на основе введенных параметров
-        List<Route> routes = searchRouteRepository.searchRoutes(route);
-
-        // сортировать список маршрутов (по времени)
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
-
-        return routes;
-    }
+//    // получить список маршрутов на определенную дату
+//    @PostMapping("/search/specific")
+//    public List<Route> searchSpecific(@RequestBody Route route) {
+//
+//        // получить список маршрутов из БД на основе введенных параметров
+//        List<Route> routes = searchRouteRepository.searchRoutes(route);
+//
+//        // сортировать список маршрутов (по времени)
+//        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
+//
+//        return routes;
+//    }
 
     // получить список маршрутов с разбивкой по датам времени
     @PostMapping("/search/global")
@@ -51,6 +51,20 @@ public class SearchRouteController {
 
         // получить список маршрутов из БД на основе введенных параметров
         List<Route> routes = searchRouteRepository.searchRoutes(route);
+
+        // сортировать список маршрутов (по времени - датам)
+        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
+        Collections.sort(routes, Comparator.comparing(Route::getDepartureDate));
+
+        return routes;
+    }
+
+    // получить все маршруты
+    @GetMapping("/search/all")
+    public List<Route> searchAll(@RequestParam String date) {
+
+        // получить список маршрутов из БД
+        List<Route> routes = searchRouteRepository.getRoutesByDate(date);
 
         // сортировать список маршрутов (по времени - датам)
         Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));

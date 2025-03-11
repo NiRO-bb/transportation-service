@@ -53,12 +53,14 @@
                 <option value="Автобус">Автобус</option>
                 <option value="Ж/Д">Ж/Д</option>
                 <option value="Авиа">Авиа</option>
+                <option value="">Микс</option>
             </select>
         </div>
 
-        <!-- Кнопка -->
+        <!-- Кнопки -->
         <div class="buttonContainer">
-            <button id="searchButton" type="button">Найти</button>
+            <button id="searchSpecificButton" type="button">Найти</button>
+            <button id="searchAllButton" type="button">Показать все маршруты</button>
         </div>
         
         <!-- Всплывающее окно -->
@@ -71,6 +73,9 @@
 
         <!-- Результаты поиска -->
         <div id="response"></div>
+
+        <!-- Дополнительная кнопка -->
+        <div id="additionalButton"></div>
     </form>
 
     <!-- Скрипт -->
