@@ -25,25 +25,8 @@ public class SearchRouteController {
     // получить список маршрутов по имени пользователя
     @GetMapping("/search/route_list")
     public List<Route> getRouteList(@RequestParam String userLogin) {
-
-        // получить список маршрутов из БД по логину пользователя
-        List<Route> routes = searchRouteRepository.getRouteList(userLogin);
-
-        return routes;
+        return searchRouteRepository.getRouteList(userLogin);
     }
-
-//    // получить список маршрутов на определенную дату
-//    @PostMapping("/search/specific")
-//    public List<Route> searchSpecific(@RequestBody Route route) {
-//
-//        // получить список маршрутов из БД на основе введенных параметров
-//        List<Route> routes = searchRouteRepository.searchRoutes(route);
-//
-//        // сортировать список маршрутов (по времени)
-//        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
-//
-//        return routes;
-//    }
 
     // получить список маршрутов с разбивкой по датам времени
     @PostMapping("/search/global")

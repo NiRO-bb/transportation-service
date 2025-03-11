@@ -21,22 +21,9 @@ public class SignUpController {
 
         boolean result = false;
 
-        if (isCorrect(user)) {
+        if (!signUpRepository.isUserExist(user.getLogin())) {
             signUpRepository.addUser(user);
             result = true;
-        }
-
-        return result;
-    }
-
-    // проверить корректность данных
-    private boolean isCorrect(User user) {
-        boolean result = true;
-
-        // проверка
-        // 1. проверить логин на уникальность
-        if (signUpRepository.isUserExist(user.getLogin())) {
-            result = false;
         }
 
         return result;
