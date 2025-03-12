@@ -5,8 +5,8 @@ exitButton.addEventListener('click', () => {
 });
 
 // Регистрация
-const notification = document.getElementById('notification');
-notification.textContent = '';
+const notificationField = document.getElementById('notification');
+notificationField.textContent = '';
 
 let login = document.getElementById('userLogin');
 let password = document.getElementById('userPassword');

@@ -1,14 +1,16 @@
-// область вывода
-const textField = document.getElementById('response');
+// области вывода
+const textField = document.getElementById('routes');
 const buttonField = document.getElementById('additionalButton');
 
 // кнопки
 const specificButton = document.getElementById('searchSpecificButton');
-const allButton = document.getElementById('searchAllButton'); 
+const allButton = document.getElementById('searchAllButton');
 
+// запрос /search/custom
 specificButton.addEventListener('click', () => {
 
     textField.textContent = '';
+    buttonField.innerHTML = '';
     let isValid = true;
 
     // значения текстовых полей
@@ -34,152 +36,121 @@ specificButton.addEventListener('click', () => {
     if (departureTime) {
         if (!departureTime.match(document.getElementById('departureTime').pattern)) {
             isValid = false;
-            textField.innerHTML += "<p>Указанное время не соответствует формату! Например, 12:00</p>";
+            textField.innerHTML += "<p>Указанное время не соответствует формату! Например, 09:00</p>";
         }
     }
 
     if (isValid) {
-        // данные в формате JSON
-        const data = {
-            id: 0,
-            transport: transport,
-            places: 0,
-            departurePoint: departurePoint,
-            arrivalPoint: arrivalPoint,
-            departureDate: departureDate,
-            departureTime: departureTime,
-            arrivalDate: "",
-            arrivalTime: ""
-        };
 
         // HTTP-запрос
-        fetch('http://localhost:8080/search/global', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
+        fetch(`http://localhost:8080/search/custom?transport=${transport}&departurePoint=${departurePoint}&arrivalPoint=${arrivalPoint}&departureDate=${departureDate}&departureTime=${departureTime}`)
             .then(response => {
-                // обработка ответа
                 return response.json();
             })
             .then(data => {
-                if (data.length > 0) {
-                    displayData(data);
+
+                let result = '';
+
+                data.forEach(route => {
+                    result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
+                    result += `<p><button type="button" onclick="showRouteDetails('${route.id}')">Подробнее</button></p>`
+                });
+
+                if (!result) {
+                    result = 'Не удалось найти маршруты, соответствующие вашему запросу.';
                 }
-                else {
-                    textField.innerHTML = '<p><h2>Результаты поиска</h2></p><p>Не удалось найти маршруты, соответствующие вашему запросу.</p>';
-                }
+
+                textField.innerHTML = '<p><h2>Результаты поиска</h2></p>';
+                textField.innerHTML += result;
             })
             .catch(error => {
                 console.error('Error:', error);
-                textField.textContent = 'Ошибка при получении данных с сервера';
+                textField.textContent = 'Произошла ошибка! Попробуйте позже.';
             });
     }
 });
 
+// запрос /search/global
 allButton.addEventListener('click', () => {
 
     textField.textContent = '';
 
-    fetch('http://localhost:8080/search/all?date=')
-    .then(response => {
-        return response.json();
-    })
-    .then (data => {
-        textField.innerHTML = '<p><h2>Результаты поиска</h2></p>';
-
-        let result = '';
-        let date = '';
-
-        data.forEach(route => {
-            result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
-            date = route.departureDate;
-        });
-
-        textField.innerHTML += `<p><h3>Дата отправления: ${date}<h3></p>`;
-
-        if (!result) {
-            result += "<p>Маршрутов нет.</p>";
-        }
-        else {
-            buttonField.innerHTML = `<button type="button" onclick="getNewRoutes('${date}')">Показать еще</button>`;
-        }
-        textField.innerHTML += result;
-    })
-    .catch(error => {
-        console.log("Error:", error);
-    });
-});
-
-// получить новые маршруты (для поиска без указания параметров)
-function getNewRoutes(date) {
-
-    fetch(`http://localhost:8080/search/all?date=${date}`)
-    .then(response => {
-        return response.json();
-    })
-    .then (data => {
-        let newDate = '';
-        let result = '';
-
-        data.forEach(route => {
-            result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
-            newDate = route.departureDate;
-        });
-        
-        if (result) {
-            textField.innerHTML += `<p><h3>Дата отправления: ${newDate}<h3></p>`;     
-            textField.innerHTML += result;
-            buttonField.innerHTML = `<button type="button" onclick="getNewRoutes('${newDate}')">Показать еще</button>`;
-        }
-        else {
-            buttonField.textContent = '';
-        }
-    })
-    .catch(error => {
-        console.log("Error:", error);
-    });
-}
-
-// вывести результаты запроса
-function displayData(response) {
-    let result = '<p><h2>Результаты поиска</h2></p>';
-
-    response.forEach(route => {
-        result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
-        result += `<p><button type="button" onclick="showRouteDetails('${route.id}')">Подробнее</button></p>`
-    });
-
-    if (!result) {
-        result += 'Не удалось найти маршруты, соответствующие вашему запросу.';
-    }
-
-    textField.innerHTML = result;
-}
-
-function showRouteDetails(routeId) {
-
-    let placeAmount = 0;
-
-    // HTTP-запрос
-    fetch(`http://localhost:8080/search/place_checking?routeId=${routeId}`)
+    // HTTP-запрос 
+    fetch('http://localhost:8080/search/global?date=')
         .then(response => {
-            // обработка ответа
             return response.json();
         })
-        .then(response => {
-            placeAmount = response;
+        .then(data => {
 
-            if (placeAmount > 0) {
+            textField.innerHTML = '<p><h2>Результаты поиска</h2></p>';
+
+            displayRoutes(data);
+        })
+        .catch(error => {
+            console.log("Error:", error);
+        });
+});
+
+// отобразить список маршрутов
+function displayRoutes(data) {
+
+    let newDate = '';
+    let result = '';
+
+    data.forEach(route => {
+        result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
+        result += `<p><button type="button" onclick="showRouteDetails('${route.id}')">Подробнее</button></p>`
+        newDate = route.departureDate;
+    });
+
+    if (result) {
+        textField.innerHTML += `<p><h3>Дата отправления: ${newDate}<h3></p>`;
+        textField.innerHTML += result;
+        buttonField.innerHTML = `<button type="button" onclick="getRoutes('${newDate}')">Показать еще</button>`;
+    }
+    else {
+        result += "<p>Маршрутов нет.</p>";
+        buttonField.textContent = '';
+    }
+}
+
+// получить новые маршруты
+function getRoutes(date) {
+
+    fetch(`http://localhost:8080/search/global?date=${date}`)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            displayRoutes(data);
+        })
+        .catch(error => {
+            console.log("Error:", error);
+        });
+}
+
+
+// перейти к бронированию билета
+function showRouteDetails(routeId) {
+
+    let places = 0;
+
+    // HTTP-запрос
+    fetch(`http://localhost:8080/search/getFreePlaces?routeId=${routeId}`)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            places = data;
+
+            if (places > 0) {
                 window.location.href = '/booking.html';
                 localStorage.setItem('routeId', routeId);
             }
             else {
                 // показать уведомление об отсутствии свободных мест на маршруте
-                var modal = document.getElementById('notification');
-                modal.style.display = "block";
+                var modalWindow = document.getElementById('notification');
+                modalWindow.style.display = "block";
 
                 var span = document.getElementsByClassName('close')[0];
                 span.onclick = function () {

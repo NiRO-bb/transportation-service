@@ -5,6 +5,9 @@ import com.github.transportation_service.server.repository.entity.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,24 +19,36 @@ public class SearchRouteController {
     @Autowired
     SearchRouteRepository searchRouteRepository;
 
-    // получить информация о маршруте по id
-    @GetMapping("/search/route_info")
-    public Route getRouteInfo(@RequestParam int routeId) {
-        return searchRouteRepository.getRoute(routeId);
+    // получить информация о маршруте по его id
+    @GetMapping("/search/getRoute")
+    public Route getRoute(@RequestParam int routeId) {
+        return searchRouteRepository.getRouteById(routeId);
     }
 
-    // получить список маршрутов по имени пользователя
-    @GetMapping("/search/route_list")
-    public List<Route> getRouteList(@RequestParam String userLogin) {
-        return searchRouteRepository.getRouteList(userLogin);
+    // получить список маршрутов по логину пользователя
+    @GetMapping("/search/getRouteByLogin")
+    public List<Route> getRouteByLogin(@RequestParam String userLogin) {
+        return searchRouteRepository.getRouteByUserLogin(userLogin);
     }
 
-    // получить список маршрутов с разбивкой по датам времени
-    @PostMapping("/search/global")
-    public List<Route> searchGlobal(@RequestBody Route route) {
+    // получить список маршрутов на основе заполненных данных
+    @GetMapping("/search/custom")
+    public List<Route> searchCustom(
+            @RequestParam String transport,
+            @RequestParam String departurePoint,
+            @RequestParam String arrivalPoint,
+            @RequestParam String departureDate,
+            @RequestParam String departureTime) {
+
+        Route route = new Route();
+        route.setDeparturePoint(URLDecoder.decode(departurePoint));
+        route.setArrivalPoint(URLDecoder.decode(arrivalPoint));
+        route.setDepartureDate(departureDate.equals("") ? null : LocalDate.parse(departureDate));
+        route.setDepartureTime(departureTime.equals("") ? null : LocalTime.parse(departureTime));
+        route.setTransport(URLDecoder.decode(transport));
 
         // получить список маршрутов из БД на основе введенных параметров
-        List<Route> routes = searchRouteRepository.searchRoutes(route);
+        List<Route> routes = searchRouteRepository.getRouteByParams(route);
 
         // сортировать список маршрутов (по времени - датам)
         Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
@@ -42,12 +57,12 @@ public class SearchRouteController {
         return routes;
     }
 
-    // получить все маршруты
-    @GetMapping("/search/all")
-    public List<Route> searchAll(@RequestParam String date) {
+    // получить список всех маршрутов по дате
+    @GetMapping("/search/global")
+    public List<Route> searchGlobal(@RequestParam String date) {
 
         // получить список маршрутов из БД
-        List<Route> routes = searchRouteRepository.getRoutesByDate(date);
+        List<Route> routes = searchRouteRepository.getRouteByDate(date);
 
         // сортировать список маршрутов (по времени - датам)
         Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
@@ -56,9 +71,9 @@ public class SearchRouteController {
         return routes;
     }
 
-    // проверить количество свободных мест на рейсе
-    @GetMapping("/search/place_checking")
-    public int isTherePlace(@RequestParam int routeId) {
-        return searchRouteRepository.checkPlaces(routeId);
+    // получить количество свободных мест маршрута
+    @GetMapping("/search/getFreePlaces")
+    public int getFreePlaces(@RequestParam int routeId) {
+        return searchRouteRepository.getPlaceByRouteId(routeId);
     }
 }

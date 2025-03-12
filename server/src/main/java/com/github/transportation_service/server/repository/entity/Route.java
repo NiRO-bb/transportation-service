@@ -26,6 +26,7 @@ public class Route {
 
 
     // constructor
+    public Route() {}
     public Route(int id, String transport, int places, String departurePoint, String arrivalPoint, LocalDate departureDate, LocalTime departureTime, LocalDate arrivalDate, LocalTime arrivalTime) {
         this.id = id;
         this.transport = transport;

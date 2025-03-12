@@ -8,7 +8,6 @@
 </head>
 
 <body>
-    <form>
         <div class="pages">
             <h2>
                 <!-- Список забронированных билетов -->
@@ -17,20 +16,18 @@
                 <a href="/registration.html">Регистрация</a>
             </h2>
         </div>
-    </form>
 
-    <form>
         <h2>Введите данные</h2>
         <!-- Пункт отправления -->
         <div class="field">
             <label for="departurePoint">Откуда:</label>
-            <input type="text" id="departurePoint" placeholder="Казань" required>
+            <input type="text" id="departurePoint" placeholder="Казань">
         </div>
 
         <!-- Пункт прибытия -->
         <div class="field">
             <label for="arrivalPoint">Куда:</label>
-            <input type="text" id="arrivalPoint" placeholder="Москва" required>
+            <input type="text" id="arrivalPoint" placeholder="Москва">
         </div>
         
         <!-- Дата отправления -->
@@ -64,7 +61,7 @@
         </div>
         
         <!-- Всплывающее окно -->
-        <div id="notification" class="modal">
+        <div id="notification" class="modal-window">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <p>На текущем маршруте нет свободных мест на данный момент.</p>
@@ -72,11 +69,10 @@
         </div>
 
         <!-- Результаты поиска -->
-        <div id="response"></div>
+        <div id="routes"></div>
 
         <!-- Дополнительная кнопка -->
         <div id="additionalButton"></div>
-    </form>
 
     <!-- Скрипт -->
     <script src="/scripts/searchRoutes.js"></script>

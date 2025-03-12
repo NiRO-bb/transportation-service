@@ -19,46 +19,46 @@ public class SearchRouteRepositoryTest {
     List<Route> routes;
     Route route;
 
-    // getRoute()
+    // getRouteById()
     @Test
     public void shouldReturnRoute() {
-        route = searchRouteRepository.getRoute(1);
+        route = searchRouteRepository.getRouteById(1);
 
         Assertions.assertEquals(10, route.getPlaces());
     }
 
-    // getRouteList()
+    // getRouteByUserLogin()
     @Test
     public void shouldReturnRouteListByLogin() {
-        routes = searchRouteRepository.getRouteList("test");
+        routes = searchRouteRepository.getRouteByUserLogin("test");
 
         Assertions.assertEquals(2, routes.size());
     }
 
-    // searchRoutes()
+    // getRouteByParams()
     @Test
     public void shouldReturnRouteListByRouteInfo() {
-        routes = searchRouteRepository.searchRoutes(searchRouteRepository.getRoute(1));
+        routes = searchRouteRepository.getRouteByParams(searchRouteRepository.getRouteById(1));
 
         Assertions.assertEquals(1, routes.size());
     }
 
-    // getRoutesByDate()
+    // getRouteByDate()
     @Test
     public void shouldReturnRouteListByDate() {
-        routes = searchRouteRepository.getRoutesByDate("");
+        routes = searchRouteRepository.getRouteByDate("");
 
         Assertions.assertEquals(1, routes.size());
 
-        routes = searchRouteRepository.getRoutesByDate("2026-01-01");
+        routes = searchRouteRepository.getRouteByDate("2026-01-01");
 
         Assertions.assertEquals(0, routes.size());
     }
 
-    // checkPlaces()
+    // getPlaceByRouteId()
     @Test
     public void shouldReturnPlacesByRouteId() {
-        int places = searchRouteRepository.checkPlaces(2);
+        int places = searchRouteRepository.getPlaceByRouteId(2);
 
         Assertions.assertEquals(19, places);
     }

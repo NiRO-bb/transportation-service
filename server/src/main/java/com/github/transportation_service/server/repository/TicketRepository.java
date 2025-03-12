@@ -1,4 +1,4 @@
-package com.github.transportation_service.server.repository;
+    package com.github.transportation_service.server.repository;
 
 import com.github.transportation_service.server.repository.entity.Ticket;
 import org.springframework.stereotype.Component;
@@ -11,22 +11,25 @@ import java.util.List;
 public class TicketRepository extends Repository{
 
     // добавить билет в базу данных
-    public void addTicket(Ticket ticket) {
+    public boolean addTicket(Ticket ticket) {
+
+        boolean result = false;
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
-
             ps = connection.prepareStatement("INSERT INTO TICKET(USER_LOGIN, ROUTE) VALUES('%s', '%s')".formatted(ticket.getUserLogin(), ticket.getRoute()));
-            ps.execute();
 
-            // close connection
+            if(ps.executeUpdate() > 0)
+                result = true;
+
             ps.close();
             connection.close();
         }
         catch (SQLException exception) {
             System.out.println(exception.getMessage() + " - error caused in TicketRepository.addTicket() method.");
         }
+
+        return result;
     }
 
     // удалить билет из базы данных
@@ -34,14 +37,12 @@ public class TicketRepository extends Repository{
         boolean isRemoved = false;
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             ps = connection.prepareStatement("DELETE FROM TICKET WHERE ID = '%s'".formatted(ticketId));
 
-            ps.executeUpdate();
-            isRemoved = true;
+            if (ps.executeUpdate() > 0)
+                isRemoved = true;
 
-            // close connection
             ps.close();
             connection.close();
         }
@@ -53,12 +54,11 @@ public class TicketRepository extends Repository{
     }
 
     // получить билеты по id пользователя
-    public List<Ticket> getUserTickets(String userLogin) {
+    public List<Ticket> getTicketByUserLogin(String userLogin) {
 
         List<Ticket> tickets = new ArrayList<>();
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
             resultSet = s.executeQuery("SELECT * FROM TICKET WHERE USER_LOGIN = '%s'".formatted(userLogin));
@@ -70,7 +70,6 @@ public class TicketRepository extends Repository{
                         resultSet.getInt("ROUTE")));
             }
 
-            // close connection
             resultSet.close();
             s.close();
             connection.close();

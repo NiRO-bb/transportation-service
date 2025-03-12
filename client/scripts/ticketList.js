@@ -5,7 +5,7 @@ exitButton.addEventListener('click', () => {
 });
 
 // Получить список билетов
-const textField = document.getElementById('response');
+const textField = document.getElementById('tickets');
 textField.textContent = '';
 
 const button = document.getElementById('searchButton');
@@ -24,19 +24,8 @@ function buttonFunction() {
 
     if (isValid) {
 
-        const data = {
-            login: login.value,
-            password: password.value
-        }
-
         // HTTP-запрос - авторизация
-        fetch('http://localhost:8080/sign_in', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
+        fetch(`http://localhost:8080/sign_in?login=${login.value}&password=${password.value}`)
             .then(response => {
                 return response.json();
             })
@@ -54,16 +43,17 @@ function buttonFunction() {
     }
 }
 
+// отобразить билеты пользователя
 async function displayTickets() {
     textField.innerHTML = '<p><h2>Ваши билеты</h2></p>';
 
     try {
         // HTTP-запрос - список забронированных билетов пользователя
-        const ticketsResponse = await fetch(`http://localhost:8080/ticket/list?userLogin=${document.getElementById('userLogin').value}`);
+        const ticketsResponse = await fetch(`http://localhost:8080/ticket/getTickets?userLogin=${document.getElementById('userLogin').value}`);
         const ticketsData = await ticketsResponse.json();
 
         // HTTP-запрос - информация о маршруте по id
-        const routesResponse = await fetch(`http://localhost:8080/search/route_list?userLogin=${document.getElementById('userLogin').value}`)
+        const routesResponse = await fetch(`http://localhost:8080/search/getRouteByLogin?userLogin=${document.getElementById('userLogin').value}`)
         const routesData = await routesResponse.json();
 
         if (ticketsData.length === 0) {
@@ -86,7 +76,7 @@ async function displayTickets() {
     }
 }
 
-const notification = document.getElementById('modalMessage');
+const notification = document.getElementById('modal-message');
 function cancelBooking(ticketId) {
 
     buttonFunction();
@@ -100,7 +90,7 @@ function cancelBooking(ticketId) {
 
             if (data) {
                 // уведомить об успешной отмене брони билета
-                notification.innerHTML = "Бронь успешно отменена.";                
+                notification.innerHTML = "Бронь успешно отменена.";
 
                 var modal = document.getElementById('notification');
                 modal.style.display = "block";
@@ -117,7 +107,7 @@ function cancelBooking(ticketId) {
             }
             else {
                 // уведомить об ошибке
-                notification.innerHTML = "Произошла ошибка при попытке отменить бронь.";                
+                notification.innerHTML = "Произошла ошибка при попытке отменить бронь.";
 
                 var modal = document.getElementById('notification');
                 modal.style.display = "block";

@@ -18,21 +18,14 @@ public class SearchRouteControllerTest {
     @Autowired
     private SearchRouteController searchRouteController;
 
-    // searchGlobal() searchAll()
+    // searchCustom()
     @Test
     public void shouldReturnSortedRouteList() {
-        Route route = new Route(0, "", 0, "москва", "саратов", null, null, null, null);
 
-        List<Route> routes = searchRouteController.searchGlobal(route);
+        List<Route> routes = searchRouteController.searchCustom("", "москва", "саратов", "", "");
 
         LocalDate date1 = routes.get(0).getDepartureDate();
         LocalDate date2 = routes.get(1).getDepartureDate();
-        Assertions.assertTrue(date1.compareTo(date2) < 0);
-
-        routes = searchRouteController.searchAll("");
-
-        date1 = routes.get(0).getDepartureDate();
-        date2 = routes.get(1).getDepartureDate();
         Assertions.assertTrue(date1.compareTo(date2) < 0);
     }
 }

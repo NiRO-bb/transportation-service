@@ -32,23 +32,25 @@ public class TicketRepositoryTest {
     // addTicket()
     @Test
     public void shouldAddTicketToDB() {
-        ticketRepository.addTicket(new Ticket(0, "test", 3));
+        boolean result = ticketRepository.addTicket(new Ticket(0, "test", 3));
 
-        Assertions.assertEquals(3, ticketRepository.getUserTickets("test").size());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(3, ticketRepository.getTicketByUserLogin("test").size());
     }
 
     // removeTicket()
     @Test
     public void shouldRemoveTicketFromDB() {
-        ticketRepository.removeTicket(2);
+        boolean result = ticketRepository.removeTicket(2);
 
-        Assertions.assertEquals(1, ticketRepository.getUserTickets("test").size());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(1, ticketRepository.getTicketByUserLogin("test").size());
     }
 
-    // getUserTickets()
+    // getTicketByUserLogin()
     @Test
     public void shouldReturnTicketList() {
-        tickets = ticketRepository.getUserTickets("test");
+        tickets = ticketRepository.getTicketByUserLogin("test");
 
         Assertions.assertEquals(2, tickets.size());
     }
@@ -56,7 +58,6 @@ public class TicketRepositoryTest {
     @AfterEach
     public void tearDown() {
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
 
             ps = connection.prepareStatement("DELETE FROM TICKET");
@@ -67,7 +68,6 @@ public class TicketRepositoryTest {
             ps = connection.prepareStatement("INSERT INTO TICKET VALUES (2, 'test', 2)");
             ps.executeUpdate();
 
-            // close connection
             ps.close();
             connection.close();
         }

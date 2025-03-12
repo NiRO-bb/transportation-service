@@ -1,43 +1,42 @@
-// Вернуться назад
+// вернуться назад
 const exitButton = document.getElementById('exitButton');
 exitButton.addEventListener('click', () => {
     window.location.href = '/index.html';
 });
 
-// Информация о маршруте
+// информация о маршруте
 const routeInfo = document.getElementById('routeInfo');
 let routeId = localStorage.getItem('routeId');
 
-fetch(`http://localhost:8080/search/route_info?routeId=${routeId}`)
-.then(response => {
-    return response.json();
-})
-.then(data => {
-    let info = '';
-
-    info += `<p>Маршрут: ${data.departurePoint} - ${data.arrivalPoint}</p>`;
-    info += `<p>Дата и время отправления: ${data.departureDate} - ${data.departureTime}</p>`;
-    info += `<p>Дата и время прибытия: ${data.arrivalDate} - ${data.arrivalTime}</p>`;
-    info += `<p>Вид транспорта: ${data.transport}</p>`;
-
-    // HTTP-запрос - количество свободных мест
-    fetch(`http://localhost:8080/search/place_checking?routeId=${routeId}`)
+fetch(`http://localhost:8080/search/getRoute?routeId=${routeId}`)
     .then(response => {
-        // обработка ответа
         return response.json();
     })
-    .then(placeAmount => {
-        info += `<p>Количество свободных мест: ${placeAmount}</p>`;
-        routeInfo.innerHTML += info;
+    .then(data => {
+        let info = '';
+
+        info += `<p>Маршрут: ${data.departurePoint} - ${data.arrivalPoint}</p>`;
+        info += `<p>Дата и время отправления: ${data.departureDate} - ${data.departureTime}</p>`;
+        info += `<p>Дата и время прибытия: ${data.arrivalDate} - ${data.arrivalTime}</p>`;
+        info += `<p>Вид транспорта: ${data.transport}</p>`;
+
+        // HTTP-запрос
+        fetch(`http://localhost:8080/search/getFreePlaces?routeId=${routeId}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                info += `<p>Количество свободных мест: ${data}</p>`;
+                routeInfo.innerHTML += info;
+            });
+    })
+    .catch(error => {
+        console.log("Error:", error);
     });
-})
-.catch(error => {
-    console.log("Error:", error);
-});
 
 // бронирование билета
 const button = document.getElementById('bookingButton');
-const notification = document.getElementById('notification');
+const notificationField = document.getElementById('notification');
 
 button.addEventListener('click', () => {
 
@@ -49,60 +48,55 @@ button.addEventListener('click', () => {
     // проверка заполненности полей
     if (!userLogin || !userPassword) {
         isValid = false;
-        notification.textContent = 'Необходимо заполнить поля "Логин" и "Пароль"!';
+        notificationField.textContent = 'Необходимо заполнить поля "Логин" и "Пароль"!';
     }
 
     if (isValid) {
-        // данные в формате JSON
-        const user = {
-            login: userLogin,
-            password: userPassword
-        }
 
         // HTTP-запрос - авторизация
-        fetch('http://localhost:8080/sign_in', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                
-                // данные в формате JSON
-                const ticket = {
-                    id: 0,
-                    userLogin: userLogin,
-                    route: localStorage.getItem('routeId')
+        fetch(`http://localhost:8080/sign_in?login=${userLogin}&password=${userPassword}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+
+                    // данные в формате JSON
+                    const ticket = {
+                        id: 0,
+                        userLogin: userLogin,
+                        route: localStorage.getItem('routeId')
+                    }
+
+                    // HTTP-запрос - бронирование билета
+                    fetch('http://localhost:8080/ticket/book', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(ticket)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            }
+                        })
+                        .then(data => {
+                            if (data) {
+                                // уведомление об успешной операции + ссылка на страницу для просмотра забронированных билетов
+                                notificationField.innerHTML = 'Билет забронирован! Список забронированных билетов можно посмотреть <a href="/ticketList.html">здесь</a>.';
+                            }
+                            else {
+                                notificationField.innerHTML = 'Произошла ошибка! Попробуйте позже.';
+                            }
+                        });
                 }
-
-                // HTTP-запрос - бронирование билета
-                fetch('http://localhost:8080/ticket/book', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(ticket)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // уведомление об успешной операции + ссылка на страницу для просмотра забронированных билетов
-                        notification.innerHTML = 'Билет забронирован! Список забронированных билетов можно посмотреть <a href="/ticketList.html">здесь</a>.';
-
-                        return response.text();
-                    }  
-                });
-            }
-            else {
-                notification.textContent = 'Вы неверно указали логин и/или пароль!';
-            }
-        })
-        .catch(error => {
-            console.log("Error", error);
-        });
+                else {
+                    notificationField.textContent = 'Вы неверно указали логин и/или пароль!';
+                }
+            })
+            .catch(error => {
+                console.log("Error", error);
+            });
     }
 });

@@ -17,8 +17,8 @@ public class TicketController {
 
     // забронировать билет
     @PostMapping("/ticket/book")
-    public void bookTicket(@RequestBody Ticket ticket) {
-        ticketRepository.addTicket(ticket);
+    public boolean bookTicket(@RequestBody Ticket ticket) {
+        return ticketRepository.addTicket(ticket);
     }
 
     // отменить бронь
@@ -28,8 +28,8 @@ public class TicketController {
     }
 
     // получить список забронированных билетов пользователя
-    @GetMapping("/ticket/list")
+    @GetMapping("/ticket/getTickets")
     public List<Ticket> getTickets(@RequestParam String userLogin) {
-        return ticketRepository.getUserTickets(userLogin);
+        return ticketRepository.getTicketByUserLogin(userLogin);
     }
 }

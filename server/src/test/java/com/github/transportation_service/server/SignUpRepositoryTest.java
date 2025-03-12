@@ -1,5 +1,6 @@
 package com.github.transportation_service.server;
 
+import com.github.transportation_service.server.repository.SignInRepository;
 import com.github.transportation_service.server.repository.SignUpRepository;
 import com.github.transportation_service.server.repository.entity.User;
 import org.junit.jupiter.api.AfterEach;
@@ -21,36 +22,27 @@ public class SignUpRepositoryTest {
 
     @Autowired
     SignUpRepository signUpRepository;
+    @Autowired
+    SignInRepository signInRepository;
 
     @Value("${dbURL}")
     private String url;
     private Connection connection;
     private PreparedStatement ps;
 
-    // addUser
+    // addUser()
     @Test
     public void shouldAddUserToDB() {
-        Assertions.assertFalse(signUpRepository.isUserExist("user"));
+        Assertions.assertFalse(signInRepository.isUserExist("user"));
 
         signUpRepository.addUser(new User("user", "user"));
 
-        Assertions.assertTrue(signUpRepository.isUserExist("user"));
-    }
-
-    // isUserExist
-    @Test
-    public void shouldReturnTrueIfUserExists() {
-        boolean result = signUpRepository.isUserExist("test");
-        Assertions.assertTrue(result);
-
-        result = signUpRepository.isUserExist("test2");
-        Assertions.assertFalse(result);
+        Assertions.assertTrue(signInRepository.isUserExist("user"));
     }
 
     @AfterEach
     public void tearDown() {
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
 
             ps = connection.prepareStatement("DELETE FROM USER");
@@ -58,7 +50,6 @@ public class SignUpRepositoryTest {
             ps = connection.prepareStatement("INSERT INTO USER VALUES('test', 'test')");
             ps.executeUpdate();
 
-            // close connection
             ps.close();
             connection.close();
         }

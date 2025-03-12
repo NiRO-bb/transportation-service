@@ -15,12 +15,11 @@ public class SearchRouteRepository extends Repository {
     private final long hours = 2;
 
     // получить маршрут по id
-    public Route getRoute(int routeId) {
+    public Route getRouteById(int routeId) {
 
         Route route = null;
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
             resultSet = s.executeQuery("SELECT * FROM ROUTE WHERE ID = '%s'".formatted(routeId));
@@ -39,7 +38,6 @@ public class SearchRouteRepository extends Repository {
                 );
             }
 
-            // close connection
             resultSet.close();
             s.close();
             connection.close();
@@ -52,11 +50,10 @@ public class SearchRouteRepository extends Repository {
     }
 
     // получить маршруты по логину пользователя
-    public List<Route> getRouteList(String userLogin) {
+    public List<Route> getRouteByUserLogin(String userLogin) {
         List<Route> routes = new ArrayList<>();
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
 
@@ -76,7 +73,6 @@ public class SearchRouteRepository extends Repository {
                 ));
             }
 
-            // close connection
             resultSet.close();
             s.close();
             connection.close();
@@ -89,26 +85,22 @@ public class SearchRouteRepository extends Repository {
     }
 
     // получить маршруты согласно заданным параметрам
-    public List<Route> searchRoutes(Route route) {
+    public List<Route> getRouteByParams(Route route) {
 
         List<Route> routes = new ArrayList<>();
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
 
             String query = "SELECT * FROM ROUTE WHERE DEPARTURE_POINT = '%s' AND ARRIVAL_POINT = '%s'".formatted(route.getDeparturePoint().toLowerCase(), route.getArrivalPoint().toLowerCase());
 
-            // check transport field
             if (!route.getTransport().equals(""))
                 query += " AND TRANSPORT = '%s'".formatted(route.getTransport());
 
-            // check dates field
             if (route.getDepartureDate() != null)
                 query += " AND DEPARTURE_DATE = '%s'".formatted(route.getDepartureDate());
 
-            // check time field
             if (route.getDepartureTime() != null) {
                 LocalTime lowTimeBorder = route.getDepartureTime().minusHours(2);
                 LocalTime highTimeBorder = route.getDepartureTime().plusHours(2);
@@ -140,7 +132,6 @@ public class SearchRouteRepository extends Repository {
                 ));
             }
 
-            // close connection
             resultSet.close();
             s.close();
             connection.close();
@@ -153,15 +144,12 @@ public class SearchRouteRepository extends Repository {
     }
 
     // получить маршруты по дате
-    public List<Route> getRoutesByDate(String date) {
+    public List<Route> getRouteByDate(String date) {
         List<Route> routes = new ArrayList<>();
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
-
-
 
             String query = "SELECT * FROM ROUTE WHERE DEPARTURE_DATE = ";
 
@@ -186,14 +174,12 @@ public class SearchRouteRepository extends Repository {
                 ));
             }
 
-            // close connection
             resultSet.close();
             s.close();
             connection.close();
 
             // маршруты не найдены
             if (routes.isEmpty()) {
-                // open connection
                 connection = DriverManager.getConnection(url);
                 s = connection.createStatement();
                 resultSet = s.executeQuery("SELECT MAX(DEPARTURE_DATE) FROM ROUTE");
@@ -204,13 +190,12 @@ public class SearchRouteRepository extends Repository {
                     maxDate = resultSet.getString("MAX(DEPARTURE_DATE)");
                 }
 
-                // close connection
                 resultSet.close();
                 s.close();
                 connection.close();
 
                 if (!LocalDate.parse(maxDate).isBefore(LocalDate.parse(date).plusDays(1))) {
-                    routes = getRoutesByDate(String.valueOf(LocalDate.parse(date).plusDays(1)));
+                    routes = getRouteByDate(String.valueOf(LocalDate.parse(date).plusDays(1)));
                 }
             }
         }
@@ -222,12 +207,11 @@ public class SearchRouteRepository extends Repository {
     }
 
     // проверить количество свободных мест
-    public int checkPlaces(int routeId) {
+    public int getPlaceByRouteId(int routeId) {
 
         int placeAmount = 0;
 
         try {
-            // open connection
             connection = DriverManager.getConnection(url);
             s = connection.createStatement();
             resultSet = s.executeQuery("SELECT (ROUTE.PLACES - COUNT(TICKET.ID)) AS FREE_PLACES FROM ROUTE LEFT JOIN TICKET ON ROUTE.ID = TICKET.ROUTE WHERE ROUTE.ID = '%s'".formatted(routeId, routeId));
@@ -236,7 +220,6 @@ public class SearchRouteRepository extends Repository {
                 placeAmount = resultSet.getInt("FREE_PLACES");
             }
 
-            // close connection
             resultSet.close();
             s.close();
             connection.close();

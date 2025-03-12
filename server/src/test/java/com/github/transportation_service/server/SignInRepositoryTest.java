@@ -15,13 +15,23 @@ public class SignInRepositoryTest {
     @Autowired
     private SignInRepository signInRepository;
 
-    // checkUser()
+    // isUserExist() - params: String login
     @Test
-    public void shouldReturnTrueIfUserExists() {
-        boolean result = signInRepository.checkUser(new User("test", "test"));
+    public void shouldReturnTrueIfUserExistsByLogin() {
+        boolean result = signInRepository.isUserExist("test");
         Assertions.assertTrue(result);
 
-        result = signInRepository.checkUser(new User("test2", "test2"));
+        result = signInRepository.isUserExist("test2");
+        Assertions.assertFalse(result);
+    }
+
+    // isUserExist() - params: User user
+    @Test
+    public void shouldReturnTrueIfUserExistsByUserInfo() {
+        boolean result = signInRepository.isUserExist(new User("test", "test"));
+        Assertions.assertTrue(result);
+
+        result = signInRepository.isUserExist(new User("test2", "test2"));
         Assertions.assertFalse(result);
     }
 }
