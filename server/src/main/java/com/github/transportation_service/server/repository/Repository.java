@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public abstract class Repository {
 
-    @Value("${dbURL}")
+    @Value("${spring.datasource.url}")
     protected String url;
     protected Connection connection;
 

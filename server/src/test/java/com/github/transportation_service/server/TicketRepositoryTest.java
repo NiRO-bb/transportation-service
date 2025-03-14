@@ -24,7 +24,7 @@ public class TicketRepositoryTest {
     private TicketRepository ticketRepository;
     List<Ticket> tickets;
 
-    @Value("${dbURL}")
+    @Value("${spring.datasource.url}")
     private String url;
     private Connection connection;
     private PreparedStatement ps;

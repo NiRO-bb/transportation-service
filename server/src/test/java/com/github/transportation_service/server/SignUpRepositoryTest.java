@@ -25,7 +25,7 @@ public class SignUpRepositoryTest {
     @Autowired
     SignInRepository signInRepository;
 
-    @Value("${dbURL}")
+    @Value("${spring.datasource.url}")
     private String url;
     private Connection connection;
     private PreparedStatement ps;
