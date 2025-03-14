@@ -67,7 +67,6 @@ public class SearchRouteController {
         // сортировать список маршрутов (по времени - датам)
         Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
         Collections.sort(routes, Comparator.comparing(Route::getDepartureDate));
-
         return routes;
     }
 
