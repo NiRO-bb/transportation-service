@@ -2,6 +2,13 @@
 
 cd server
 
+# сборка проекта
 mvn clean package
 
-java -jar target/*.jar
+cd ..
+
+# сборка docker-образа
+docker build -t transportation_service .
+
+# запуск docker-контейнера
+docker run -p 8080:8080 transportation_service
