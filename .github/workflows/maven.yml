@@ -1,0 +1,39 @@
+name: Java CI/CD with Maven and Docker
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Получение кода
+    - uses: actions/checkout@v4
+    
+    # Установка JDK
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    # Сборка проекта Maven
+    - name: Build with Maven
+      run: |
+        cd server
+        mvn -B clean package --file pom.xml
+
+    # Сборка Docker образа
+    - name: Build Docker image
+      run: docker build -t transportation_service .
+
+    # Запуск Docker контейнера
+    - name: Run Docker container
+      run: |
+        docker run -d -p 8080:8080 transportation_service
+        docker ps -a
