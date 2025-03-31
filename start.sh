@@ -7,6 +7,9 @@ mvn clean package
 
 cd ..
 
+# остановка рабочего docker-контейнера
+docker stop $(docker ps -q)
+
 # сборка docker-образа
 docker build -t transportation_service .
 
