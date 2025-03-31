@@ -1,56 +1,24 @@
 package com.github.transportation_service.server.repository;
 
 import com.github.transportation_service.server.repository.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.sql.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component
-public class SignInRepository extends Repository {
+public class SignInRepository {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     // проверить наличие пользователя в базе данных
     public boolean isUserExist(String login) {
-        boolean isExist = false;
-
-        try {
-            connection = DriverManager.getConnection(url);
-            s = connection.createStatement();
-            resultSet = s.executeQuery("SELECT * FROM USER WHERE LOGIN = '%s'".formatted(login));
-
-            if (resultSet.next()) {
-                isExist = true;
-            }
-
-            resultSet.close();
-            s.close();
-            connection.close();
-        }
-        catch (SQLException exception) {
-            System.out.println(exception.getMessage() + "error caused in SignUpRepository.isUserExist() method.");
-        }
-
-        return isExist;
+        Integer result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER WHERE LOGIN = ?", Integer.class, login);
+        return result > 0;
     }
-    public boolean isUserExist(User user) {
-        boolean isExist = false;
-
-        try {
-            connection = DriverManager.getConnection(url);
-            s = connection.createStatement();
-            resultSet = s.executeQuery("SELECT * FROM USER WHERE LOGIN = '%s' AND PASSWORD = '%s'".formatted(user.getLogin(), user.getPassword()));
-
-            if (resultSet.next()) {
-                isExist = true;
-            }
-
-            resultSet.close();
-            s.close();
-            connection.close();
-        }
-        catch (SQLException exception) {
-            System.out.println(exception.getMessage() + " - error caused in SignInRepository.checkUser() method");
-        }
-
-        return isExist;
+    // проверить правильность введенных логина и пароля
+    public boolean isUserExist(User user){
+        Integer result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER WHERE LOGIN = ? AND PASSWORD = ?", Integer.class, user.getLogin(), user.getPassword());
+        return result > 0;
     }
 }

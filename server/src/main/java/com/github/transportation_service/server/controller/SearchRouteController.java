@@ -41,8 +41,8 @@ public class SearchRouteController {
             @RequestParam String departureTime) {
 
         Route route = new Route();
-        route.setDeparturePoint(URLDecoder.decode(departurePoint));
-        route.setArrivalPoint(URLDecoder.decode(arrivalPoint));
+        route.setDeparturePoint(departurePoint);
+        route.setArrivalPoint(arrivalPoint);
         route.setDepartureDate(departureDate.equals("") ? null : LocalDate.parse(departureDate));
         route.setDepartureTime(departureTime.equals("") ? null : LocalTime.parse(departureTime));
         route.setTransport(URLDecoder.decode(transport));
