@@ -23,7 +23,7 @@ specificButton.addEventListener('click', () => {
     // проверить заполнение обязательных полей 
     if (!departurePoint || !arrivalPoint) {
         isValid = false;
-        textField.innerHTML += '<p>Необходимо заполнить поля "Пункт отправления" и "Пункт прибытия"!</p>';
+        textField.innerHTML += '<p>Необходимо заполнить поля "Откуда" и "Куда"!</p>';
     }
 
     // проверить соответствие паттернам

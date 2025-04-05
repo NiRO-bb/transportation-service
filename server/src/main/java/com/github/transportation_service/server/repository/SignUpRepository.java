@@ -12,7 +12,7 @@ public class SignUpRepository {
     private JdbcTemplate jdbcTemplate;
 
     // добавить пользователя в базу данных
-    public void addUser(User user) {
-        jdbcTemplate.update("INSERT INTO USER VALUES(?, ?)", user.getLogin(), user.getPassword());
+    public int addUser(User user) {
+        return jdbcTemplate.update("INSERT INTO USER VALUES(?, ?)", user.getLogin(), user.getPassword());
     }
 }

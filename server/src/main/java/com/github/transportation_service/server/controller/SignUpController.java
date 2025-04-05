@@ -22,13 +22,10 @@ public class SignUpController {
     @PostMapping("/sign_up")
     public boolean createAccount(@RequestBody User user) {
 
-        boolean result = false;
-
         if (!signInRepository.isUserExist(user.getLogin())) {
-            signUpRepository.addUser(user);
-            result = true;
+            return signUpRepository.addUser(user) > 0;
         }
 
-        return result;
+        return false;
     }
 }

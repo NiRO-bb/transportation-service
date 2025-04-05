@@ -5,21 +5,14 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class TicketRowMapper implements RowMapper<List<Ticket>> {
+public class TicketRowMapper implements RowMapper<Ticket> {
     @Override
-    public List<Ticket> mapRow(ResultSet rs, int rowNum) throws SQLException {
-        List<Ticket> tickets = new ArrayList<>();
+    public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-        do {
-            tickets.add(new Ticket(
-                    rs.getInt("ID"),
-                    rs.getString("USER_LOGIN"),
-                    rs.getInt("ROUTE")));
-        } while (rs.next());
-
-        return tickets;
+        return new Ticket(
+                rs.getInt("ID"),
+                rs.getString("USER_LOGIN"),
+                rs.getInt("ROUTE"));
     }
 }

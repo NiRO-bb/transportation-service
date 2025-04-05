@@ -28,6 +28,6 @@ public class TicketRepository {
 
     // получить билеты по id пользователя
     public List<Ticket> getTicketByUserLogin(String userLogin) {
-        return jdbcTemplate.queryForObject("SELECT * FROM TICKET WHERE USER_LOGIN = ?", new TicketRowMapper(), userLogin);
+        return jdbcTemplate.query("SELECT * FROM TICKET WHERE USER_LOGIN = ?", new TicketRowMapper(), userLogin);
     }
 }

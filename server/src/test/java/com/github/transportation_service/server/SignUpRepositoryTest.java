@@ -28,8 +28,9 @@ public class SignUpRepositoryTest {
     public void shouldAddUserToDB() {
         Assertions.assertFalse(signInRepository.isUserExist("user"));
 
-        signUpRepository.addUser(new User("user", "user"));
+        int result = signUpRepository.addUser(new User("user", "user"));
 
+        Assertions.assertEquals(1, result);
         Assertions.assertTrue(signInRepository.isUserExist("user"));
     }
 
