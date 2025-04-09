@@ -1,9 +1,3 @@
-// Вернуться назад
-const exitButton = document.getElementById('exitButton');
-exitButton.addEventListener('click', () => {
-    window.location.href = '/index.html';
-});
-
 // Регистрация
 const notificationField = document.getElementById('notification');
 notificationField.textContent = '';
@@ -19,12 +13,12 @@ button.addEventListener('click', () => {
 
     if (!login.value || !password.value) {
         isValid = false;
-        notification.textContent = 'Необходимо заполнить все поля!';
+        notificationField.innerHTML = '<p>Необходимо заполнить все поля!</p>';
     }
 
     if (password.value != confirmPassword.value) {
         isValid = false;
-        notification.textContent = 'Введенные пароли не совпадают!';
+        notificationField.innerHTML = '<p>Введенные пароли не совпадают!</p>';
     }
 
     if (isValid) {
@@ -48,10 +42,10 @@ button.addEventListener('click', () => {
         })
         .then(data => {
             if (!data) {
-                notification.textContent = 'Указанный вами логин уже занят!';
+                notificationField.innerHTML = '<p>Указанный вами логин уже занят!</p>';
             }
             else {
-                notification.textContent = `Создан аккаунт - ${document.getElementById('userLogin').value}`;
+                notificationField.innerHTML = `<p>Создан аккаунт - ${document.getElementById('userLogin').value}</p>`;
             }
         })
         .catch(error => {

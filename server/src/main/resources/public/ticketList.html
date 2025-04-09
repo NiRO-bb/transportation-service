@@ -9,32 +9,45 @@
 </head>
 
 <body>
-    <!-- Вернуться к поиску билетов -->
-    <button id="exitButton" type="button">Назад</button>
+    <div class="pages">
+        <h2>
+            <!-- Поиск билетов -->
+            <a href="index.html">ПОИСК БИЛЕТОВ</a>
+            <!-- Регистрация -->
+            <a href="/registration.html">РЕГИСТРАЦИЯ</a>
+        </h2>
+    </div>
 
-    <h2>Введите данные</h2>
+    <div class="header">
+        <b>МОИ БИЛЕТЫ</b>
+        <p>ВВЕДИТЕ ДАННЫЕ</p>
+    </div>
+    
 
     <!-- Логин -->
     <div class="field">
-        <label for="userLogin">Логин:</label>
+        <label for="userLogin">ЛОГИН</label>
         <input type="text" id="userLogin">
     </div>
 
     <!-- Пароль -->
     <div class="field">
-        <label for="userPassword">Пароль:</label>
+        <label for="userPassword">ПАРОЛЬ</label>
         <input type="password" id="userPassword">
     </div>
 
     <!-- Кнопка -->
     <div class="buttonContainer">
-        <button id="searchButton" type="button">Найти билеты</button>
+        <button id="searchButton" type="button">НАЙТИ БИЛЕТЫ</button>
     </div>
 
-    <div id="tickets"></div>
+    <div id="tickets" class="searchResult"></div>
+
+    <!-- Уведомление об ошибке -->
+    <div id="notification" class="notification"></div>
 
     <!-- Всплывающее окно -->
-    <div id="notification" class="modal-window">
+    <div id="modalWindow" class="modal-window">
         <div class="modal-content">
             <span class="close">&times;</span>
             <div id="modal-message"></div>

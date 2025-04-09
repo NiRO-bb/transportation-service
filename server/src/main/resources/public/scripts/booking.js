@@ -1,38 +1,34 @@
-// вернуться назад
-const exitButton = document.getElementById('exitButton');
-exitButton.addEventListener('click', () => {
-    window.location.href = '/index.html';
-});
-
 // информация о маршруте
 const routeInfo = document.getElementById('routeInfo');
 let routeId = localStorage.getItem('routeId');
 
-fetch(`http://localhost:8080/search/getRoute?routeId=${routeId}`)
-    .then(response => {
-        return response.json();
-    })
-    .then(data => {
-        let info = '';
+getRouteInfo();
 
-        info += `<p>Маршрут: ${data.departurePoint} - ${data.arrivalPoint}</p>`;
-        info += `<p>Дата и время отправления: ${data.departureDate} - ${data.departureTime}</p>`;
-        info += `<p>Дата и время прибытия: ${data.arrivalDate} - ${data.arrivalTime}</p>`;
-        info += `<p>Вид транспорта: ${data.transport}</p>`;
+function getRouteInfo() {
+    routeInfo.innerHTML = '';
+    fetch(`http://localhost:8080/search/getRoute?routeId=${routeId}`)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            let info = '';
 
-        // HTTP-запрос
-        fetch(`http://localhost:8080/search/getFreePlaces?routeId=${routeId}`)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                info += `<p>Количество свободных мест: ${data}</p>`;
-                routeInfo.innerHTML += info;
-            });
-    })
-    .catch(error => {
-        console.log("Error:", error);
-    });
+            info = `<div class="result"><p>Маршрут: <b>${data.departurePoint} - ${data.arrivalPoint}</b></p><p>Дата и время отправления: <b>${data.departureDate} - ${data.departureTime}</b></p><p>Дата и время прибытия: <b>${data.arrivalDate} - ${data.arrivalTime}</b></p><p>Вид транспорта: <b>${data.transport}</b></p></div>`;
+
+            // HTTP-запрос
+            fetch(`http://localhost:8080/search/getFreePlaces?routeId=${routeId}`)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    info += `<div class="result"><p>Количество свободных мест: <b>${data}</b></p></div>`;
+                    routeInfo.innerHTML += info;
+                });
+        })
+        .catch(error => {
+            console.log("Error:", error);
+        });
+}
 
 // бронирование билета
 const button = document.getElementById('bookingButton');
@@ -48,7 +44,7 @@ button.addEventListener('click', () => {
     // проверка заполненности полей
     if (!userLogin || !userPassword) {
         isValid = false;
-        notificationField.textContent = 'Необходимо заполнить поля "Логин" и "Пароль"!';
+        notificationField.innerHTML = '<p>Необходимо заполнить поля "ЛОГИН" и "ПАРОЛЬ"!<p>';
     }
 
     if (isValid) {
@@ -84,15 +80,16 @@ button.addEventListener('click', () => {
                         .then(data => {
                             if (data) {
                                 // уведомление об успешной операции + ссылка на страницу для просмотра забронированных билетов
-                                notificationField.innerHTML = 'Билет забронирован! Список забронированных билетов можно посмотреть <a href="/ticketList.html">здесь</a>.';
+                                notificationField.innerHTML = '<p>Билет забронирован! Список забронированных билетов можно посмотреть в разделе <a href="ticketList.html">МОИ БИЛЕТЫ</a>.</p>';
+                                getRouteInfo();
                             }
                             else {
-                                notificationField.innerHTML = 'Произошла ошибка! Попробуйте позже.';
+                                notificationField.innerHTML = '<p>Произошла ошибка! Попробуйте позже.</p>';
                             }
                         });
                 }
                 else {
-                    notificationField.textContent = 'Вы неверно указали логин и/или пароль!';
+                    notificationField.innerHTML = '<p>Вы неверно указали логин и/или пароль!</p>';
                 }
             })
             .catch(error => {

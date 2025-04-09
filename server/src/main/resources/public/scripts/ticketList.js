@@ -1,10 +1,5 @@
-// Вернуться назад
-const exitButton = document.getElementById('exitButton');
-exitButton.addEventListener('click', () => {
-    window.location.href = '/index.html';
-});
-
 // Получить список билетов
+const notificationField = document.getElementById('notification');
 const textField = document.getElementById('tickets');
 textField.textContent = '';
 
@@ -12,6 +7,9 @@ const button = document.getElementById('searchButton');
 button.addEventListener('click', buttonFunction);
 
 function buttonFunction() {
+    notificationField.innerHTML = "";
+    textField.innerHTML = "";
+
     const login = document.getElementById('userLogin');
     const password = document.getElementById('userPassword');
 
@@ -19,7 +17,7 @@ function buttonFunction() {
 
     if (!login.value || !password.value) {
         isValid = false;
-        textField.textContent = 'Необходимо заполнить все поля!';
+        notificationField.innerHTML = '<p>Необходимо заполнить все поля!</p>';
     }
 
     if (isValid) {
@@ -31,7 +29,7 @@ function buttonFunction() {
             })
             .then(data => {
                 if (!data) {
-                    textField.textContent = 'Вы неверно указали логин и/или пароль!';
+                    notificationField.innerHTML = '<p>Вы неверно указали логин и/или пароль!</p>';
                 }
                 else {
                     displayTickets();
@@ -45,7 +43,7 @@ function buttonFunction() {
 
 // отобразить билеты пользователя
 async function displayTickets() {
-    textField.innerHTML = '<p><h2>Ваши билеты</h2></p>';
+    textField.innerHTML = '<div class="header"><b>РЕЗУЛЬТАТ ПОИСКА</b></div>';
 
     try {
         // HTTP-запрос - список забронированных билетов пользователя
@@ -65,9 +63,8 @@ async function displayTickets() {
             const route = routesData.find(route => route.id === ticket.route);
 
             if (route) {
-                textField.innerHTML += `<p>Номер билета: ${ticket.id}</p>`;
-                textField.innerHTML += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}.</p>`;
-                textField.innerHTML += `<p><button onclick="cancelBooking(${ticket.id})">Отменить бронь</p>`;
+                textField.innerHTML += `<div class="result"><p>Номер билета: <b>${ticket.id}</b></p><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p></div>`;
+                textField.innerHTML += `<div class="buttonContainer"><p><button onclick="cancelBooking(${ticket.id})">ОТМЕНИТЬ БРОНЬ</p><div>`;
             }
         }
     }
@@ -92,8 +89,8 @@ function cancelBooking(ticketId) {
                 // уведомить об успешной отмене брони билета
                 notification.innerHTML = "Бронь успешно отменена.";
 
-                var modal = document.getElementById('notification');
-                modal.style.display = "block";
+                var modal = document.getElementById('modalWindow');
+                modal.style.display = "flex";
 
                 var span = document.getElementsByClassName('close')[0];
                 span.onclick = function () {
@@ -109,8 +106,8 @@ function cancelBooking(ticketId) {
                 // уведомить об ошибке
                 notification.innerHTML = "Произошла ошибка при попытке отменить бронь.";
 
-                var modal = document.getElementById('notification');
-                modal.style.display = "block";
+                var modal = document.getElementById('modalWindow');
+                modal.style.display = "flex";
 
                 var span = document.getElementsByClassName('close')[0];
                 span.onclick = function () {

@@ -1,4 +1,5 @@
 // области вывода
+const notificationField = document.getElementById('notification');
 const textField = document.getElementById('routes');
 const buttonField = document.getElementById('additionalButton');
 
@@ -9,6 +10,7 @@ const allButton = document.getElementById('searchAllButton');
 // запрос /search/custom
 specificButton.addEventListener('click', () => {
 
+    notificationField.textContent = '';
     textField.textContent = '';
     buttonField.innerHTML = '';
     let isValid = true;
@@ -23,20 +25,20 @@ specificButton.addEventListener('click', () => {
     // проверить заполнение обязательных полей 
     if (!departurePoint || !arrivalPoint) {
         isValid = false;
-        textField.innerHTML += '<p>Необходимо заполнить поля "Откуда" и "Куда"!</p>';
+        notificationField.innerHTML += '<p>Необходимо заполнить поля "ОТКУДА" и "КУДА"</p>';
     }
 
     // проверить соответствие паттернам
     if (departureDate) {
         if (!departureDate.match(document.getElementById('departureDate').pattern)) {
             isValid = false;
-            textField.innerHTML += "<p>Указанная дата не соответствует формату! Например, 2024-12-31</p>";
+            notificationField.innerHTML += "<p>Указанная дата не соответствует формату ГГГГ-ММ-ДД (например, 2024-12-31)</p>";
         }
     }
     if (departureTime) {
         if (!departureTime.match(document.getElementById('departureTime').pattern)) {
             isValid = false;
-            textField.innerHTML += "<p>Указанное время не соответствует формату! Например, 09:00</p>";
+            notificationField.innerHTML += "<p>Указанное время не соответствует формату ЧЧ:ММ (например, 09:00)</p>";
         }
     }
 
@@ -52,15 +54,15 @@ specificButton.addEventListener('click', () => {
                 let result = '';
 
                 data.forEach(route => {
-                    result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
-                    result += `<p><button type="button" onclick="showRouteDetails('${route.id}')">Подробнее</button></p>`
+                    result += `<div class="result"><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p><p>Вид транспорта: <b>${route.transport}</b></p></div>`
+                    result += `<div class="buttonContainer"><button type="button" onclick="showRouteDetails('${route.id}')">ПОДРОБНЕЕ</button></div>`
                 });
 
                 if (!result) {
                     result = 'Не удалось найти маршруты, соответствующие вашему запросу.';
                 }
 
-                textField.innerHTML = '<p><h2>Результаты поиска</h2></p>';
+                textField.innerHTML = '<div class="header">РЕЗУЛЬТАТЫ ПОИСКА</div>';
                 textField.innerHTML += result;
             })
             .catch(error => {
@@ -73,6 +75,7 @@ specificButton.addEventListener('click', () => {
 // запрос /search/global
 allButton.addEventListener('click', () => {
 
+    notificationField.textContent = '';
     textField.textContent = '';
 
     // HTTP-запрос 
@@ -82,7 +85,7 @@ allButton.addEventListener('click', () => {
         })
         .then(data => {
 
-            textField.innerHTML = '<p><h2>Результаты поиска</h2></p>';
+            textField.innerHTML = '<div class="header"><b>РЕЗУЛЬТАТЫ ПОИСКА</b></div>';
 
             displayRoutes(data);
         })
@@ -98,15 +101,15 @@ function displayRoutes(data) {
     let result = '';
 
     data.forEach(route => {
-        result += `<p>Маршрут: ${route.departurePoint} - ${route.arrivalPoint}. Дата и время отправления: ${route.departureDate} - ${route.departureTime}. Дата и время прибытия: ${route.arrivalDate} - ${route.arrivalTime}. Вид транспорта: ${route.transport}.</p>`
-        result += `<p><button type="button" onclick="showRouteDetails('${route.id}')">Подробнее</button></p>`
+        result += `<div class="result"><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p><p>Вид транспорта: <b>${route.transport}</b></p></div>`
+        result += `<div class="buttonContainer"><button type="button" onclick="showRouteDetails('${route.id}')">ПОДРОБНЕЕ</button></div>`
         newDate = route.departureDate;
     });
 
     if (result) {
         textField.innerHTML += `<p><h3>Дата отправления: ${newDate}<h3></p>`;
         textField.innerHTML += result;
-        buttonField.innerHTML = `<button type="button" onclick="getRoutes('${newDate}')">Показать еще</button>`;
+        buttonField.innerHTML = `<div class="buttonContainer"><button type="button" onclick="getRoutes('${newDate}')">ПОКАЗАТЬ ЕЩЕ</button></div>`;
     }
     else {
         result += "<p>Маршрутов нет.</p>";
@@ -149,8 +152,8 @@ function showRouteDetails(routeId) {
             }
             else {
                 // показать уведомление об отсутствии свободных мест на маршруте
-                var modalWindow = document.getElementById('notification');
-                modalWindow.style.display = "block";
+                var modal = document.getElementById('modalWindow');
+                modal.style.display = "flex";
 
                 var span = document.getElementsByClassName('close')[0];
                 span.onclick = function () {

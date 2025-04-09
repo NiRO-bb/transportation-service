@@ -9,35 +9,44 @@
 </head>
 
 <body>
-    <!-- Вернуться к поиску билетов -->
-    <button id="exitButton" type="button">Назад</button>
+    <div class="pages">
+        <h2>
+            <!-- Список забронированных билетов -->
+            <a href="ticketList.html">МОИ БИЛЕТЫ</a>
+            <!-- Поиск билетов -->
+            <a href="index.html">ПОИСК БИЛЕТОВ</a>
+        </h2>
+    </div>
 
-    <h2>Введите данные</h2>
+    <div class="header">
+        <b>РЕГИСТРАЦИЯ</b>
+        <p>ВВЕДИТЕ ДАННЫЕ</p>
+    </div>
     <!-- Логин -->
     <div class="field">
-        <label for="userLogin">Логин:</label>
+        <label for="userLogin">ЛОГИН</label>
         <input type="text" id="userLogin">
     </div>
 
     <!-- Пароль -->
     <div class="field">
-        <label for="userPassword">Пароль:</label>
+        <label for="userPassword">ПАРОЛЬ</label>
         <input type="password" id="userPassword">
     </div>
 
     <!-- Подтверждение пароля -->
     <div class="field">
-        <label for="confirmPassword">Подтвердите пароль:</label>
+        <label for="confirmPassword">ПОДТВЕРДИТЕ ПАРОЛЬ</label>
         <input type="password" id="confirmPassword">
     </div>
 
     <!-- Кнопка -->
     <div class="buttonContainer">
-        <button id="registrationButton" type="button">Создать аккаунт</button>
+        <button id="registrationButton" type="button">СОЗДАТЬ АККАУНТ</button>
     </div>
 
     <!-- Уведомление -->
-    <div id="notification"></div>
+    <div id="notification" class="notification"></div>
 
 
     <!-- Скрипт -->

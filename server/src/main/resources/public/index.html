@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Поиск билетов</title>
@@ -8,73 +9,82 @@
 </head>
 
 <body>
-        <div class="pages">
-            <h2>
-                <!-- Список забронированных билетов -->
-                <a href="ticketList.html">Мои билеты</a>
-                <!-- Регистрация -->
-                <a href="/registration.html">Регистрация</a>
-            </h2>
-        </div>
+    <div class="pages">
+        <h2>
+            <!-- Список забронированных билетов -->
+            <a href="ticketList.html">МОИ БИЛЕТЫ</a>
+            <!-- Регистрация -->
+            <a href="registration.html">РЕГИСТРАЦИЯ</a>
+        </h2>
+    </div>
 
-        <h2>Введите данные</h2>
-        <!-- Пункт отправления -->
-        <div class="field">
-            <label for="departurePoint">Откуда:</label>
-            <input type="text" id="departurePoint" placeholder="Казань">
-        </div>
+    <div class="header">
+        <b>ПОИСК БИЛЕТОВ</b>
+        <p>ВВЕДИТЕ ДАННЫЕ</p>
+    </div>
+    
+    <!-- Пункт отправления -->
+    <div class="field">
+        <label for="departurePoint">ОТКУДА</label>
+        <input type="text" id="departurePoint" placeholder="Казань">
+    </div>
 
-        <!-- Пункт прибытия -->
-        <div class="field">
-            <label for="arrivalPoint">Куда:</label>
-            <input type="text" id="arrivalPoint" placeholder="Москва">
-        </div>
-        
-        <!-- Дата отправления -->
-        <div class="field">
-            <label for="departureDate">Дата:</label>
-            <input type="text" id="departureDate" placeholder="2025-05-25" pattern="[12][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]">
-        </div>
-        
-        <!-- Время отправления -->
-        <div class="field">
-            <label for="departureTime">Время:</label>
-            <input type="text" id="departureTime" placeholder="12:00" pattern="[012][0-9]:[0-5][0-9]">
-        </div>
+    <!-- Пункт прибытия -->
+    <div class="field">
+        <label for="arrivalPoint">КУДА</label>
+        <input type="text" id="arrivalPoint" placeholder="Москва">
+    </div>
 
-        <!-- Вид транспорта -->
-        <div class="field">
-            <label for="transport">Транспорт:</label>
-            <select id="transport">
-                <option value="">Выберите вид транспорта</option>
-                <option value="Автобус">Автобус</option>
-                <option value="Ж/Д">Ж/Д</option>
-                <option value="Авиа">Авиа</option>
-                <option value="">Микс</option>
-            </select>
-        </div>
+    <!-- Дата отправления -->
+    <div class="field">
+        <label for="departureDate">ДАТА</label>
+        <input type="text" id="departureDate" placeholder="2025-05-25"
+            pattern="[12][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]">
+    </div>
 
-        <!-- Кнопки -->
-        <div class="buttonContainer">
-            <button id="searchSpecificButton" type="button">Найти</button>
-            <button id="searchAllButton" type="button">Показать все маршруты</button>
-        </div>
-        
-        <!-- Всплывающее окно -->
-        <div id="notification" class="modal-window">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <p>На текущем маршруте нет свободных мест на данный момент.</p>
-            </div>
-        </div>
+    <!-- Время отправления -->
+    <div class="field">
+        <label for="departureTime">ВРЕМЯ</label>
+        <input type="text" id="departureTime" placeholder="12:00" pattern="[012][0-9]:[0-5][0-9]">
+    </div>
 
-        <!-- Результаты поиска -->
-        <div id="routes"></div>
+    <!-- Вид транспорта -->
+    <div class="field">
+        <label for="transport">ТРАНСПОРТ</label>
+        <select id="transport">
+            <option value="">Выберите вид транспорта</option>
+            <option value="Автобус">Автобус</option>
+            <option value="Ж/Д">Ж/Д</option>
+            <option value="Авиа">Авиа</option>
+            <option value="">Микс</option>
+        </select>
+    </div>
 
-        <!-- Дополнительная кнопка -->
-        <div id="additionalButton"></div>
+    <!-- Кнопки -->
+    <div class="buttonContainer">
+        <button id="searchSpecificButton" type="button">НАЙТИ</button>
+        <button id="searchAllButton" type="button">ПОКАЗАТЬ ВСЕ МАРШРУТЫ</button>
+    </div>
+
+    <!-- Уведомление об ошибке -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Всплывающее окно -->
+    <div id="modalWindow" class="modal-window">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>На текущем маршруте нет свободных мест на данный момент.</p>
+        </div>
+    </div>
+
+    <!-- Результаты поиска -->
+    <div id="routes" class="searchResult"></div>
+
+    <!-- Дополнительная кнопка -->
+    <div id="additionalButton"></div>
 
     <!-- Скрипт -->
     <script src="/scripts/searchRoutes.js"></script>
 </body>
+
 </html>

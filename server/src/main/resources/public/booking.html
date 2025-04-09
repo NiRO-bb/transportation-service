@@ -9,33 +9,48 @@
 </head>
 
 <body>
-    <!-- Вернуться к поиску билетов -->
-    <button id="exitButton" type="button">Назад</button>
+    <div class="pages">
+        <h2>
+            <!-- Поиск билетов -->
+            <a href="index.html">ПОИСК БИЛЕТОВ</a>
+            <!-- Список забронированных билетов -->
+            <a href="ticketList.html">МОИ БИЛЕТЫ</a>
+            <!-- Регистрация -->
+            <a href="registration.html">РЕГИСТРАЦИЯ</a>
+        </h2>
+    </div>
 
-    <h2>Информация о маршруте</h2>
+    <div class="header">
+        <b>ИНФОРМАЦИЯ О МАРШРУТЕ</b>
+    </div>
+
     <!-- Информация о маршруте -->
-    <div class="field">
+    <div class="searchResult">
         <div id="routeInfo"></div>
     </div>
 
-    <h2>Информация о пассажире</h2>
-    <h3>Введите данные</h3>
+    <div class="header">
+        <b>ИНФОРМАЦИЯ О ПАССАЖИРЕ</b>
+        <p>ВВЕДИТЕ ДАННЫЕ</p>
+    </div>
+
     <!-- Информация о пассажире -->
     <div class="field">
-        <label for="userLogin">Логин:</label>
+        <label for="userLogin">ЛОГИН</label>
         <input type="text" id="userLogin">
     </div>
     <div class="field">
-        <label for="userPassword">Пароль:</label>
+        <label for="userPassword">ПАРОЛЬ</label>
         <input type="password" id="userPassword">
     </div>
 
     <!-- Кнопка -->
     <div class="buttonContainer">
-        <button id="bookingButton" type="button">Забронировать</button>
+        <button id="bookingButton" type="button">ЗАБРОНИРОВАТЬ</button>
     </div>
-    <div id="notification"></div>
 
+    <!-- Уведомление об ошибке -->
+    <div id="notification" class="notification"></div>
 
     <!-- Скрипт -->
     <script src="/scripts/booking.js"></script>
