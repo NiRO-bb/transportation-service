@@ -2,6 +2,8 @@ package com.github.transportation_service.server.repository;
 
 import com.github.transportation_service.server.repository.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -18,7 +20,16 @@ public class SignInRepository {
     }
     // проверить правильность введенных логина и пароля
     public boolean isUserExist(User user){
-        Integer result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER WHERE LOGIN = ? AND PASSWORD = ?", Integer.class, user.getLogin(), user.getPassword());
-        return result > 0;
+        // хэширование пароля
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashPassword;
+
+        try {
+             hashPassword = jdbcTemplate.queryForObject("SELECT PASSWORD FROM USER WHERE LOGIN = ?", String.class, user.getLogin());
+        } catch (EmptyResultDataAccessException exception) {
+            return false;
+        }
+
+        return encoder.matches(user.getPassword(), hashPassword);
     }
 }

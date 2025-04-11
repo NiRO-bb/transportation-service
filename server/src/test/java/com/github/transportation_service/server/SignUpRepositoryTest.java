@@ -37,6 +37,6 @@ public class SignUpRepositoryTest {
     @AfterEach
     public void tearDown() {
         jdbcTemplate.update("DELETE FROM USER");
-        jdbcTemplate.update("INSERT INTO USER VALUES('test', 'test')");
+//        jdbcTemplate.update("INSERT INTO USER VALUES('test', 'test')");
     }
 }
