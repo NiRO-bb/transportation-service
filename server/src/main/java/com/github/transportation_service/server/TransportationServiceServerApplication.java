@@ -6,7 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {
 		"com.github.transportation_service.server.controller",
-		"com.github.transportation_service.server.repository"
+		"com.github.transportation_service.server.repository",
+		"com.github.transportation_service.server.service"
 })
 
 @SpringBootApplication

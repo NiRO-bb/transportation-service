@@ -1,8 +1,9 @@
 package com.github.transportation_service.server.controller;
 
-import com.github.transportation_service.server.repository.SignInRepository;
-import com.github.transportation_service.server.repository.entity.User;
+import com.github.transportation_service.server.service.SignInService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
@@ -10,11 +11,14 @@ import org.springframework.web.bind.annotation.*;
 public class SignInController {
 
     @Autowired
-    SignInRepository signInRepository;
+    SignInService signInService;
 
     // авторизоваться
     @GetMapping("/sign_in")
-    public boolean isUserExist(@RequestParam String login, @RequestParam String password) {
-        return signInRepository.isUserExist(new User(login, password));
+    public ResponseEntity<?> isUserExist(@RequestParam String login, @RequestParam String password) {
+        if (signInService.isUserExist(login, password))
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось авторизоваться (ошибка сервера)");
     }
 }

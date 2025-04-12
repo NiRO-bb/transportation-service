@@ -1,15 +1,12 @@
 package com.github.transportation_service.server.controller;
 
-import com.github.transportation_service.server.repository.SearchRouteRepository;
 import com.github.transportation_service.server.repository.entity.Route;
+import com.github.transportation_service.server.service.SearchRouteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -17,62 +14,55 @@ import java.util.List;
 public class SearchRouteController {
 
     @Autowired
-    SearchRouteRepository searchRouteRepository;
+    SearchRouteService searchRouteService;
 
     // получить информация о маршруте по его id
     @GetMapping("/search/getRoute")
-    public Route getRoute(@RequestParam int routeId) {
-        return searchRouteRepository.getRouteById(routeId);
+    public ResponseEntity<?> getRoute(@RequestParam int routeId) {
+        Route route = searchRouteService.getRoute(routeId);
+        if (route != null)
+            return new ResponseEntity<>(route, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось найти маршрут (ошибка сервера)");
     }
 
     // получить список маршрутов по логину пользователя
     @GetMapping("/search/getRouteByLogin")
-    public List<Route> getRouteByLogin(@RequestParam String userLogin) {
-        return searchRouteRepository.getRouteByUserLogin(userLogin);
+    public ResponseEntity<?> getRouteByLogin(@RequestParam String userLogin) {
+        List<Route> routes = searchRouteService.getRouteByLogin(userLogin);
+        if (!routes.isEmpty())
+            return new ResponseEntity<>(routes, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось получить маршруты (ошибка сервера)");
     }
 
     // получить список маршрутов на основе заполненных данных
     @GetMapping("/search/custom")
-    public List<Route> searchCustom(
-            @RequestParam String transport,
-            @RequestParam String departurePoint,
-            @RequestParam String arrivalPoint,
-            @RequestParam String departureDate,
-            @RequestParam String departureTime) {
-
-        Route route = new Route();
-        route.setDeparturePoint(departurePoint);
-        route.setArrivalPoint(arrivalPoint);
-        route.setDepartureDate(departureDate.equals("") ? null : LocalDate.parse(departureDate));
-        route.setDepartureTime(departureTime.equals("") ? null : LocalTime.parse(departureTime));
-        route.setTransport(URLDecoder.decode(transport));
-
-        // получить список маршрутов из БД на основе введенных параметров
-        List<Route> routes = searchRouteRepository.getRouteByParams(route);
-
-        // сортировать список маршрутов (по времени - датам)
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureDate));
-
-        return routes;
+    public ResponseEntity<?> searchCustom(@RequestParam String transport, @RequestParam String departurePoint, @RequestParam String arrivalPoint, @RequestParam String departureDate, @RequestParam String departureTime) {
+        List<Route> routes = searchRouteService.searchCustom(transport, departurePoint, arrivalPoint, departureDate, departureTime);
+        if (!routes.isEmpty())
+            return new ResponseEntity<>(routes, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось получить маршруты (ошибка сервера)");
     }
 
     // получить список всех маршрутов по дате
     @GetMapping("/search/global")
-    public List<Route> searchGlobal(@RequestParam String date) {
-
-        // получить список маршрутов из БД
-        List<Route> routes = searchRouteRepository.getRouteByDate(date);
-
-        // сортировать список маршрутов (по времени - датам)
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureDate));
-        return routes;
+    public ResponseEntity<?> searchGlobal(@RequestParam String date) {
+        List<Route> routes = searchRouteService.searchGlobal(date);
+        if (!routes.isEmpty())
+            return new ResponseEntity<>(routes, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось получить маршруты (ошибка сервера)");
     }
 
     // получить количество свободных мест маршрута
     @GetMapping("/search/getFreePlaces")
-    public int getFreePlaces(@RequestParam int routeId) {
-        return searchRouteRepository.getPlaceByRouteId(routeId);
+    public ResponseEntity<?> getFreePlaces(@RequestParam int routeId) {
+        int places = searchRouteService.getFreePlaces(routeId);
+        if (places >= 0)
+            return new ResponseEntity<>(places, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось получить количество свободных мест (ошибка сервера)");
     }
 }

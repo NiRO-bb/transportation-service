@@ -2,6 +2,7 @@ package com.github.transportation_service.server;
 
 import com.github.transportation_service.server.controller.SearchRouteController;
 import com.github.transportation_service.server.repository.entity.Route;
+import com.github.transportation_service.server.service.SearchRouteService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.util.List;
 public class SearchRouteControllerTest {
 
     @Autowired
-    private SearchRouteController searchRouteController;
+    private SearchRouteService searchRouteController;
 
     // searchCustom()
     @Test

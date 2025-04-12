@@ -26,18 +26,18 @@ public class TicketRepositoryTest {
     // addTicket()
     @Test
     public void shouldAddTicketToDB() {
-        boolean result = ticketRepository.addTicket(new Ticket(0, "test", 3));
+        int result = ticketRepository.addTicket(new Ticket(0, "test", 3));
 
-        Assertions.assertTrue(result);
+        Assertions.assertTrue(result > 0);
         Assertions.assertEquals(3, ticketRepository.getTicketByUserLogin("test").size());
     }
 
     // removeTicket()
     @Test
     public void shouldRemoveTicketFromDB() {
-        boolean result = ticketRepository.removeTicket(2);
+        int result = ticketRepository.removeTicket(2);
 
-        Assertions.assertTrue(result);
+        Assertions.assertTrue(result > 0);
         Assertions.assertEquals(1, ticketRepository.getTicketByUserLogin("test").size());
     }
 

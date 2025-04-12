@@ -1,9 +1,10 @@
 package com.github.transportation_service.server.controller;
 
-import com.github.transportation_service.server.repository.SignInRepository;
-import com.github.transportation_service.server.repository.SignUpRepository;
 import com.github.transportation_service.server.repository.entity.User;
+import com.github.transportation_service.server.service.SignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,18 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignUpController {
 
     @Autowired
-    SignUpRepository signUpRepository;
-    @Autowired
-    SignInRepository signInRepository;
+    SignUpService signUpService;
 
     // зарегистрироваться
     @PostMapping("/sign_up")
-    public boolean createAccount(@RequestBody User user) {
-
-        if (!signInRepository.isUserExist(user.getLogin())) {
-            return signUpRepository.addUser(user) > 0;
-        }
-
-        return false;
+    public ResponseEntity<?> createAccount(@RequestBody User user) {
+        if (signUpService.createAccount(user))
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Не удалось зарегистрировать нового пользователя (ошибка сервера)");
     }
 }
