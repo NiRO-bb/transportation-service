@@ -13,5 +13,5 @@ public interface TicketRepository {
     int removeTicket(int ticketId);
 
     // получить билеты по id пользователя
-    List<Ticket> getTicketByUserLogin(String userLogin);
+    Result getTicketByUserLogin(String userLogin);
 }

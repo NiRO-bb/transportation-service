@@ -1,9 +1,8 @@
 package com.github.transportation_service.server;
 
 import com.github.transportation_service.server.repository.Result;
-import com.github.transportation_service.server.repository.SignInRepository;
-import com.github.transportation_service.server.repository.SignUpRepository;
 import com.github.transportation_service.server.repository.entity.User;
+import com.github.transportation_service.server.service.SignUpService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,26 +13,23 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class SignUpRepositoryTest {
+public class SignUpServiceTest {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
+    JdbcTemplate jdbcTemplate;
     @Autowired
-    SignUpRepository signUpRepository;
-    @Autowired
-    SignInRepository signInRepository;
+    SignUpService signUpService;
 
-    // addUser()
+    // createAccount()
     @Test
-    public void shouldAddUserToDB() {
-        Assertions.assertFalse((boolean) signInRepository.isUserExist("user").getData());
-
-        Result result = signUpRepository.addUser(new User("user", "user"));
-        Assertions.assertTrue(result.isCorrect());
+    public void shouldCreateUser() {
+        Result result = signUpService.createAccount(new User("user", "user"));
+        // создан новый аккаунт
         Assertions.assertTrue((boolean) result.getData());
 
-        Assertions.assertTrue((boolean) signInRepository.isUserExist("user").getData());
+        result = signUpService.createAccount(new User("user", "user"));
+        // найден аккаунт с таким же логином
+        Assertions.assertFalse((boolean) result.getData());
     }
 
     @AfterEach

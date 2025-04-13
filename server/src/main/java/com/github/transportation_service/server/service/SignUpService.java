@@ -1,5 +1,6 @@
 package com.github.transportation_service.server.service;
 
+import com.github.transportation_service.server.repository.Result;
 import com.github.transportation_service.server.repository.SignInRepository;
 import com.github.transportation_service.server.repository.SignUpRepository;
 import com.github.transportation_service.server.repository.entity.User;
@@ -15,10 +16,13 @@ public class SignUpService {
     SignInRepository signInRepository;
 
     // зарегистрироваться
-    public boolean createAccount(User user) {
-        if (!signInRepository.isUserExist(user.getLogin())) {
-            return signUpRepository.addUser(user) > 0;
+    public Result createAccount(User user) {
+        Result result = signInRepository.isUserExist(user.getLogin());
+        if (result.isCorrect()) {
+            if (!(boolean) result.getData())
+                return signUpRepository.addUser(user);
+            return new Result(false, true);
         }
-        return false;
+        return result;
     }
 }

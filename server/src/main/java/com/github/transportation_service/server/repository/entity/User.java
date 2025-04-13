@@ -1,18 +1,23 @@
 package com.github.transportation_service.server.repository.entity;
 
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class User {
 
     // логин и пароль пользователя
+    @NotBlank(message = "Необходимо заполнить поле \"ЛОГИН\"!")
     private String login;
-    private String password;
 
+    @NotBlank(message = "Необходимо заполнить поле \"ПАРОЛЬ\"!")
+    private String password;
 
     // constructor
     public User(String login, String password) {
         this.login = login;
         this.password = password;
     }
-
 
     // getters - setters
     public String getLogin() {

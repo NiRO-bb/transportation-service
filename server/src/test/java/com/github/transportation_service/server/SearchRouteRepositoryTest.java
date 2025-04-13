@@ -16,29 +16,25 @@ public class SearchRouteRepositoryTest {
 
     @Autowired
     private SearchRouteRepository searchRouteRepository;
-    List<Route> routes;
-    Route route;
 
     // getRouteById()
     @Test
     public void shouldReturnRoute() {
-        route = searchRouteRepository.getRouteById(1);
-
+        Route route = searchRouteRepository.getRouteById(1);
         Assertions.assertEquals(10, route.getPlaces());
     }
 
     // getRouteByUserLogin()
     @Test
     public void shouldReturnRouteListByLogin() {
-        routes = searchRouteRepository.getRouteByUserLogin("test");
-
-        Assertions.assertEquals(2, routes.size());
+        List<Route> routes = searchRouteRepository.getRouteByUserLogin("test");
+        Assertions.assertEquals(3, routes.size());
     }
 
     // getRouteByParams()
     @Test
     public void shouldReturnRouteListByRouteInfo() {
-        routes = searchRouteRepository.getRouteByParams(searchRouteRepository.getRouteById(1));
+        List<Route> routes = (List<Route>) searchRouteRepository.getRouteByParams(searchRouteRepository.getRouteById(1)).getData();
 
         Assertions.assertEquals(1, routes.size());
     }
@@ -46,12 +42,10 @@ public class SearchRouteRepositoryTest {
     // getRouteByDate()
     @Test
     public void shouldReturnRouteListByDate() {
-        routes = searchRouteRepository.getRouteByDate("");
-
+        List<Route> routes = (List<Route>) searchRouteRepository.getRouteByDate("").getData();
         Assertions.assertEquals(1, routes.size());
 
-        routes = searchRouteRepository.getRouteByDate("2026-01-01");
-
+        routes = (List<Route>) searchRouteRepository.getRouteByDate("2026-01-01").getData();
         Assertions.assertEquals(0, routes.size());
     }
 
@@ -59,7 +53,6 @@ public class SearchRouteRepositoryTest {
     @Test
     public void shouldReturnPlacesByRouteId() {
         int places = searchRouteRepository.getPlaceByRouteId(2);
-
         Assertions.assertEquals(19, places);
     }
 }

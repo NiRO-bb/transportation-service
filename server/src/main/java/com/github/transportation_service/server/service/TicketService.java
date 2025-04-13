@@ -1,12 +1,11 @@
 package com.github.transportation_service.server.service;
 
+import com.github.transportation_service.server.repository.Result;
+import com.github.transportation_service.server.repository.SearchRouteRepository;
 import com.github.transportation_service.server.repository.TicketRepository;
 import com.github.transportation_service.server.repository.entity.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 
 @Service
 public class TicketService {
@@ -14,9 +13,14 @@ public class TicketService {
     @Autowired
     TicketRepository ticketRepository;
 
+    @Autowired
+    SearchRouteRepository searchRouteRepository;
+
     // забронировать билет
     public boolean bookTicket(Ticket ticket) {
-        return ticketRepository.addTicket(ticket) > 0;
+        if (searchRouteRepository.getPlaceByRouteId(ticket.getRoute()) > 0)
+            return ticketRepository.addTicket(ticket) > 0;
+        return false;
     }
 
     // отменить бронь
@@ -25,7 +29,7 @@ public class TicketService {
     }
 
     // получить список забронированных билетов пользователя
-    public List<Ticket> getTickets(String userLogin) {
+    public Result getTickets(String userLogin) {
         return ticketRepository.getTicketByUserLogin(userLogin);
     }
 }

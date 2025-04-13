@@ -12,10 +12,10 @@ public interface SearchRouteRepository {
     List<Route> getRouteByUserLogin(String userLogin);
 
     // получить маршруты согласно заданным параметрам
-    List<Route> getRouteByParams(Route route);
+    Result getRouteByParams(Route route);
 
     // получить маршруты по дате
-    List<Route> getRouteByDate(String date);
+    Result getRouteByDate(String date);
 
     // проверить количество свободных мест
     int getPlaceByRouteId(int routeId);

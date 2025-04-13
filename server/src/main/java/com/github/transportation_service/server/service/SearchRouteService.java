@@ -1,11 +1,11 @@
 package com.github.transportation_service.server.service;
 
+import com.github.transportation_service.server.repository.Result;
 import com.github.transportation_service.server.repository.SearchRouteRepository;
 import com.github.transportation_service.server.repository.entity.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URLDecoder;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public class SearchRouteService {
     }
 
     // получить список маршрутов на основе заполненных данных
-    public List<Route> searchCustom(
+    public Result searchCustom(
             String transport,
             String departurePoint,
             String arrivalPoint,
@@ -41,28 +41,30 @@ public class SearchRouteService {
         route.setArrivalPoint(arrivalPoint);
         route.setDepartureDate(departureDate.equals("") ? null : LocalDate.parse(departureDate));
         route.setDepartureTime(departureTime.equals("") ? null : LocalTime.parse(departureTime));
-        route.setTransport(URLDecoder.decode(transport));
+        route.setTransport(transport);
 
         // получить список маршрутов из БД на основе введенных параметров
-        List<Route> routes = searchRouteRepository.getRouteByParams(route);
+        Result result = searchRouteRepository.getRouteByParams(route);
+        if (result.isCorrect()) {
 
-        // сортировать список маршрутов (по времени - датам)
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureDate));
-
-        return routes;
+            // сортировать список маршрутов (по времени - датам)
+            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureTime));
+            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureDate));
+        }
+        return result;
     }
 
     // получить список всех маршрутов по дате
-    public List<Route> searchGlobal(String date) {
+    public Result searchGlobal(String date) {
 
-        // получить список маршрутов из БД
-        List<Route> routes = searchRouteRepository.getRouteByDate(date);
+        Result result = searchRouteRepository.getRouteByDate(date);
 
-        // сортировать список маршрутов (по времени - датам)
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureTime));
-        Collections.sort(routes, Comparator.comparing(Route::getDepartureDate));
-        return routes;
+        if (result.isCorrect()) {
+            // сортировать список маршрутов (по времени - датам)
+            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureTime));
+            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureDate));
+        }
+        return result;
     }
 
     // получить количество свободных мест маршрута

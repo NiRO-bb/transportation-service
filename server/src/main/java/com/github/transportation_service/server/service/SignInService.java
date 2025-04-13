@@ -1,5 +1,6 @@
 package com.github.transportation_service.server.service;
 
+import com.github.transportation_service.server.repository.Result;
 import com.github.transportation_service.server.repository.SignInRepository;
 import com.github.transportation_service.server.repository.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ public class SignInService {
     SignInRepository signInRepository;
 
     // авторизоваться
-    public boolean isUserExist(String login, String password) {
+    public Result isUserExist(String login, String password) {
         return signInRepository.isUserExist(new User(login, password));
     }
 }

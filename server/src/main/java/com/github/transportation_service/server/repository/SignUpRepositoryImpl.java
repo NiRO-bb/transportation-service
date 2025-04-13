@@ -14,15 +14,15 @@ public class SignUpRepositoryImpl implements SignUpRepository {
     private JdbcTemplate jdbcTemplate;
 
     // добавить пользователя в базу данных
-    public int addUser(User user) {
+    public Result addUser(User user) {
         try {
             // хэширование пароля
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-            return jdbcTemplate.update("INSERT INTO USER VALUES(?, ?)", user.getLogin(), encoder.encode(user.getPassword()));
+            int result = jdbcTemplate.update("INSERT INTO USER VALUES(?, ?)", user.getLogin(), encoder.encode(user.getPassword()));
+            return new Result(result > 0, true);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
-            return 0;
+            return new Result(null, false);
         }
     }
 }

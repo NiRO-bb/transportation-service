@@ -1,5 +1,6 @@
 package com.github.transportation_service.server;
 
+import com.github.transportation_service.server.repository.Result;
 import com.github.transportation_service.server.repository.SignInRepository;
 import com.github.transportation_service.server.repository.SignUpRepository;
 import com.github.transportation_service.server.repository.entity.User;
@@ -29,21 +30,22 @@ public class SignInRepositoryTest {
     // isUserExist() - params: String login
     @Test
     public void shouldReturnTrueIfUserExistsByLogin() {
-        boolean result = signInRepository.isUserExist("test");
+        boolean result = (boolean) signInRepository.isUserExist("test").getData();
         Assertions.assertTrue(result);
 
-        result = signInRepository.isUserExist("test2");
+        result = (boolean) signInRepository.isUserExist("test2").getData();
         Assertions.assertFalse(result);
     }
 
     // isUserExist() - params: User user
     @Test
     public void shouldReturnTrueIfUserExistsByUserInfo() {
-        boolean result = signInRepository.isUserExist(new User("test", "test"));
-        Assertions.assertTrue(result);
+        Result result = signInRepository.isUserExist(new User("test", "test"));
+        Assertions.assertTrue(result.isCorrect());
 
         result = signInRepository.isUserExist(new User("test2", "test2"));
-        Assertions.assertFalse(result);
+        Assertions.assertTrue(result.isCorrect());
+        Assertions.assertFalse((boolean) result.getData());
     }
 
     @AfterEach

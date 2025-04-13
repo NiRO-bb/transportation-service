@@ -25,7 +25,6 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM ROUTE WHERE ID = ?", new RouteRowMapper(), routeId);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
             return null;
         }
     }
@@ -35,13 +34,12 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
         try {
             return jdbcTemplate.query("SELECT ROUTE.* FROM ROUTE JOIN TICKET ON ROUTE.ID = TICKET.ROUTE WHERE TICKET.USER_LOGIN = ?", new RouteRowMapper(), userLogin);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
             return null;
         }
     }
 
     // получить маршруты согласно заданным параметрам
-    public List<Route> getRouteByParams(Route route) {
+    public Result getRouteByParams(Route route) {
         List<Object> params = new ArrayList<>();
 
         String query = "SELECT * FROM ROUTE WHERE DEPARTURE_POINT = ? AND ARRIVAL_POINT = ?";
@@ -76,15 +74,15 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
         }
 
         try {
-            return jdbcTemplate.query(query, new RouteRowMapper(), params.toArray());
+            List<Route> routes = jdbcTemplate.query(query, new RouteRowMapper(), params.toArray());
+            return new Result(routes, true);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
-            return null;
+            return new Result(null, false);
         }
     }
 
     // получить маршруты по дате
-    public List<Route> getRouteByDate(String date) {
+    public Result getRouteByDate(String date) {
         List<Route> routes;
 
         try {
@@ -98,14 +96,13 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
                 String maxDate = jdbcTemplate.queryForObject("SELECT MAX(DEPARTURE_DATE) FROM ROUTE", String.class);
 
                 if (!LocalDate.parse(maxDate).isBefore(LocalDate.parse(date).plusDays(1))) {
-                    routes = getRouteByDate(String.valueOf(LocalDate.parse(date).plusDays(1)));
+                    routes = (List<Route>) getRouteByDate(String.valueOf(LocalDate.parse(date).plusDays(1))).getData();
                 }
             }
 
-            return routes;
+            return new Result(routes, true);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
-            return null;
+            return new Result(null, false);
         }
     }
 
@@ -114,7 +111,6 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
         try {
             return jdbcTemplate.queryForObject("SELECT (ROUTE.PLACES - COUNT(TICKET.ID)) AS FREE_PLACES FROM ROUTE LEFT JOIN TICKET ON ROUTE.ID = TICKET.ROUTE WHERE ROUTE.ID = ?", Integer.class, routeId);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
             return -1;
         }
     }

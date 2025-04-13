@@ -1,6 +1,6 @@
 package com.github.transportation_service.server;
 
-import com.github.transportation_service.server.controller.SearchRouteController;
+import com.github.transportation_service.server.repository.Result;
 import com.github.transportation_service.server.repository.entity.Route;
 import com.github.transportation_service.server.service.SearchRouteService;
 import org.junit.jupiter.api.Assertions;
@@ -14,17 +14,17 @@ import java.util.List;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class SearchRouteControllerTest {
+public class SearchRouteServiceTest {
 
     @Autowired
-    private SearchRouteService searchRouteController;
+    SearchRouteService searchRouteService;
 
-    // searchCustom()
     @Test
     public void shouldReturnSortedRouteList() {
+        Result result = searchRouteService.searchCustom("", "москва", "саратов", "", "");
+        Assertions.assertTrue(result.isCorrect());
 
-        List<Route> routes = searchRouteController.searchCustom("", "москва", "саратов", "", "");
-
+        List<Route> routes = (List<Route>) result.getData();
         LocalDate date1 = routes.get(0).getDepartureDate();
         LocalDate date2 = routes.get(1).getDepartureDate();
         Assertions.assertTrue(date1.compareTo(date2) < 0);

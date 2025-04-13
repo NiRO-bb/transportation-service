@@ -11,14 +11,9 @@ button.addEventListener('click', () => {
 
     let isValid = true;
 
-    if (!login.value || !password.value) {
-        isValid = false;
-        notificationField.innerHTML = '<p>Необходимо заполнить все поля!</p>';
-    }
-
     if (password.value != confirmPassword.value) {
         isValid = false;
-        notificationField.innerHTML = '<p>Введенные пароли не совпадают!</p>';
+        notificationField.innerHTML = '<p>Введенные пароли не совпадают!</p>'; // проврерка на сервере - дублировать
     }
 
     if (isValid) {
@@ -37,19 +32,27 @@ button.addEventListener('click', () => {
             },
             body: JSON.stringify(data)
         })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            if (!data) {
-                notificationField.innerHTML = '<p>Указанный вами логин уже занят!</p>';
-            }
-            else {
+            .then(response => {
+                if (!response.ok) {
+                    return response.json()
+                        .then(error => {
+                            throw {
+                                message: error.message,
+                                status: error.status
+                            };
+                        });
+                }
+                return response.json();
+            })
+            .then(() => {
                 notificationField.innerHTML = `<p>Создан аккаунт - ${document.getElementById('userLogin').value}</p>`;
-            }
-        })
-        .catch(error => {
-            console.log("Error:", error);
-        });
+            })
+            .catch(error => {
+                notificationField.innerHTML = '';
+                error.message.forEach(msg => {
+                    console.log("Error:", msg);
+                    notificationField.innerHTML += `<p>${msg}</p>`;
+                });
+            });
     }
 });

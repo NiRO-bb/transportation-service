@@ -13,7 +13,6 @@ specificButton.addEventListener('click', () => {
     notificationField.textContent = '';
     textField.textContent = '';
     buttonField.innerHTML = '';
-    let isValid = true;
 
     // значения текстовых полей
     const departurePoint = document.getElementById('departurePoint').value;
@@ -22,54 +21,39 @@ specificButton.addEventListener('click', () => {
     const departureTime = document.getElementById('departureTime').value;
     const transport = document.getElementById('transport').value;
 
-    // проверить заполнение обязательных полей 
-    if (!departurePoint || !arrivalPoint) {
-        isValid = false;
-        notificationField.innerHTML += '<p>Необходимо заполнить поля "ОТКУДА" и "КУДА"</p>';
-    }
+    // HTTP-запрос - поиск по параметрам
+    fetch(`http://localhost:8080/search/custom?transport=${transport}&departurePoint=${departurePoint}&arrivalPoint=${arrivalPoint}&departureDate=${departureDate}&departureTime=${departureTime}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json()
+                    .then(error => {
+                        throw {
+                            message: error.message,
+                            status: error.status
+                        };
+                    });
+            }
+            return response.json();
+        })
+        .then(data => {
 
-    // проверить соответствие паттернам
-    if (departureDate) {
-        if (!departureDate.match(document.getElementById('departureDate').pattern)) {
-            isValid = false;
-            notificationField.innerHTML += "<p>Указанная дата не соответствует формату ГГГГ-ММ-ДД (например, 2024-12-31)</p>";
-        }
-    }
-    if (departureTime) {
-        if (!departureTime.match(document.getElementById('departureTime').pattern)) {
-            isValid = false;
-            notificationField.innerHTML += "<p>Указанное время не соответствует формату ЧЧ:ММ (например, 09:00)</p>";
-        }
-    }
+            let result = '';
 
-    if (isValid) {
-
-        // HTTP-запрос
-        fetch(`http://localhost:8080/search/custom?transport=${transport}&departurePoint=${departurePoint}&arrivalPoint=${arrivalPoint}&departureDate=${departureDate}&departureTime=${departureTime}`)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-
-                let result = '';
-
-                data.forEach(route => {
-                    result += `<div class="result"><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p><p>Вид транспорта: <b>${route.transport}</b></p></div>`
-                    result += `<div class="buttonContainer"><button type="button" onclick="showRouteDetails('${route.id}')">ПОДРОБНЕЕ</button></div>`
-                });
-
-                if (!result) {
-                    result = 'Не удалось найти маршруты, соответствующие вашему запросу.';
-                }
-
-                textField.innerHTML = '<div class="header">РЕЗУЛЬТАТЫ ПОИСКА</div>';
-                textField.innerHTML += result;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                textField.textContent = 'Произошла ошибка! Попробуйте позже.';
+            data.forEach(route => {
+                result += `<div class="result"><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p><p>Вид транспорта: <b>${route.transport}</b></p></div>`
+                result += `<div class="buttonContainer"><button type="button" onclick="showRouteDetails('${route.id}')">ПОДРОБНЕЕ</button></div>`
             });
-    }
+
+            textField.innerHTML = '<div class="header">РЕЗУЛЬТАТЫ ПОИСКА</div>';
+            textField.innerHTML += result;
+        })
+        .catch(error => {
+            notificationField.innerHTML = '';
+            error.message.forEach(msg => {
+                console.error('Error:', msg);
+                notificationField.innerHTML += `<p>${msg}</p>`;
+            });
+        });
 });
 
 // запрос /search/global
@@ -78,19 +62,30 @@ allButton.addEventListener('click', () => {
     notificationField.textContent = '';
     textField.textContent = '';
 
-    // HTTP-запрос 
+    // HTTP-запрос - поиск по дате
     fetch('http://localhost:8080/search/global?date=')
         .then(response => {
+            if (!response.ok) {
+                return response.json()
+                    .then(error => {
+                        throw {
+                            message: error.message,
+                            status: error.status
+                        };
+                    });
+            }
             return response.json();
         })
         .then(data => {
-
             textField.innerHTML = '<div class="header"><b>РЕЗУЛЬТАТЫ ПОИСКА</b></div>';
-
             displayRoutes(data);
         })
         .catch(error => {
-            console.log("Error:", error);
+            notificationField.innerHTML = '';
+            error.message.forEach(msg => {
+                console.error('Error:', msg);
+                notificationField.innerHTML += `<p>${msg}</p>`;
+            });
         });
 });
 
@@ -120,15 +115,29 @@ function displayRoutes(data) {
 // получить новые маршруты
 function getRoutes(date) {
 
+    // HTTP-запрос - поиск по дате
     fetch(`http://localhost:8080/search/global?date=${date}`)
         .then(response => {
+            if (!response.ok) {
+                return response.json()
+                    .then(error => {
+                        throw {
+                            message: error.message,
+                            status: error.status
+                        };
+                    });
+            }
             return response.json();
         })
         .then(data => {
             displayRoutes(data);
         })
         .catch(error => {
-            console.log("Error:", error);
+            notificationField.innerHTML = '';
+            error.message.forEach(msg => {
+                console.error('Error:', msg);
+                notificationField.innerHTML += `<p>${msg}</p>`;
+            });
         });
 }
 
@@ -138,9 +147,18 @@ function showRouteDetails(routeId) {
 
     let places = 0;
 
-    // HTTP-запрос
+    // HTTP-запрос - число свободных мест
     fetch(`http://localhost:8080/search/getFreePlaces?routeId=${routeId}`)
         .then(response => {
+            if (!response.ok) {
+                return response.json()
+                    .then(error => {
+                        throw {
+                            message: error.message,
+                            status: error.status
+                        };
+                    });
+            }
             return response.json();
         })
         .then(data => {
@@ -167,6 +185,10 @@ function showRouteDetails(routeId) {
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            notificationField.innerHTML = '';
+            error.message.forEach(msg => {
+                console.error('Error:', msg);
+                notificationField.innerHTML += `<p>${msg}</p>`;
+            });
         });
 }

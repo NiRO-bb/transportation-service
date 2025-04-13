@@ -13,32 +13,30 @@ function buttonFunction() {
     const login = document.getElementById('userLogin');
     const password = document.getElementById('userPassword');
 
-    let isValid = true;
-
-    if (!login.value || !password.value) {
-        isValid = false;
-        notificationField.innerHTML = '<p>Необходимо заполнить все поля!</p>';
-    }
-
-    if (isValid) {
-
-        // HTTP-запрос - авторизация
-        fetch(`http://localhost:8080/sign_in?login=${login.value}&password=${password.value}`)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                if (!data) {
-                    notificationField.innerHTML = '<p>Вы неверно указали логин и/или пароль!</p>';
-                }
-                else {
-                    displayTickets();
-                }
-            })
-            .catch(error => {
-                console.log("Error:", error);
+    // HTTP-запрос - авторизация
+    fetch(`http://localhost:8080/sign_in?login=${login.value}&password=${password.value}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json()
+                    .then(error => {
+                        throw {
+                            message: error.message,
+                            status: error.status
+                        };
+                    });
+            }
+            return response.json();
+        })
+        .then(() => {
+            displayTickets();
+        })
+        .catch(error => {
+            notificationField.innerHTML = '';
+            error.message.forEach(msg => {
+                console.log("Error:", msg);
+                notificationField.innerHTML += `<p>${msg}</p>`;
             });
-    }
+        });
 }
 
 // отобразить билеты пользователя
@@ -79,6 +77,7 @@ function cancelBooking(ticketId) {
     buttonFunction();
     notification.innerHTML = "";
 
+    // HTTP-запрос - отмена бронирования
     fetch(`http://localhost:8080/ticket/cancel?ticketId=${ticketId}`)
         .then(response => {
             return response.json();

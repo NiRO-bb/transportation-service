@@ -20,7 +20,6 @@ public class TicketRepositoryImpl implements TicketRepository {
         try {
             return jdbcTemplate.update("INSERT INTO TICKET(USER_LOGIN, ROUTE) VALUES(?, ?)", ticket.getUserLogin(), ticket.getRoute());
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
             return 0;
         }
     }
@@ -30,19 +29,17 @@ public class TicketRepositoryImpl implements TicketRepository {
         try {
             return jdbcTemplate.update("DELETE FROM TICKET WHERE ID = ?", ticketId);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
             return 0;
         }
     }
 
     // получить билеты по id пользователя
-    public List<Ticket> getTicketByUserLogin(String userLogin) {
+    public Result getTicketByUserLogin(String userLogin) {
         try {
-            return jdbcTemplate.query("SELECT * FROM TICKET WHERE USER_LOGIN = ?", new TicketRowMapper(), userLogin);
+            List<Ticket> tickets = jdbcTemplate.query("SELECT * FROM TICKET WHERE USER_LOGIN = ?", new TicketRowMapper(), userLogin);
+            return new Result(tickets, true);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
-            return null;
+            return new Result(null, false);
         }
     }
-
 }

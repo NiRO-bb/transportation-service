@@ -14,26 +14,24 @@ public class SignInRepositoryImpl implements SignInRepository {
     private JdbcTemplate jdbcTemplate;
 
     // проверить наличие пользователя в базе данных
-    public boolean isUserExist(String login) {
+    public Result isUserExist(String login) {
         try {
-            Integer result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER WHERE LOGIN = ?", Integer.class, login);
-            return result > 0;
+            int result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER WHERE LOGIN = ?", Integer.class, login);
+            return new Result(result > 0, true);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
-            return false;
+            return new Result(null, false);
         }
 
     }
     // проверить правильность введенных логина и пароля
-    public boolean isUserExist(User user){
+    public Result isUserExist(User user){
         try {
             // хэширование пароля
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String hashPassword = jdbcTemplate.queryForObject("SELECT PASSWORD FROM USER WHERE LOGIN = ?", String.class, user.getLogin());
-            return encoder.matches(user.getPassword(), hashPassword);
+            String hashPassword = jdbcTemplate.query("SELECT PASSWORD FROM USER WHERE LOGIN = ?", (rs, rowNum) -> rs.getString("PASSWORD"), user.getLogin()).toString();
+            return new Result(encoder.matches(user.getPassword(), hashPassword), true);
         } catch (DataAccessException exception) {
-            System.out.println(exception.getMessage());
-            return false;
+            return new Result(null, false);
         }
     }
 }
