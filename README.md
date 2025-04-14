@@ -51,8 +51,12 @@
 - ```SignInController```: Авторизация пользователей
 - ```SignUpController```: Регистрация пользователей
 - ```TicketController```: Бронирование, отмена бронирования и предоставление информации о билетах
+#### Сервисы
+- ```SearchRouteService```:
+- ```SignInService```:
+- ```SignUpService```:
+- ```TicketService```:
 #### Репозитории
-(связь с базой данных)
 - ```SearchRouteRepository``` 
 - ```SignInRepository```
 - ```SignUpRepository```
