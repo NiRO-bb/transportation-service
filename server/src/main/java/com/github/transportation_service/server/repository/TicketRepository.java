@@ -2,8 +2,6 @@ package com.github.transportation_service.server.repository;
 
 import com.github.transportation_service.server.repository.entity.Ticket;
 
-import java.util.List;
-
 public interface TicketRepository {
 
     // добавить билет в базу данных

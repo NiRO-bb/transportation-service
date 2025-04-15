@@ -73,6 +73,8 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
             params.add(highTimeBorder);
         }
 
+        query += " ORDER BY DEPARTURE_DATE, DEPARTURE_TIME";
+
         try {
             List<Route> routes = jdbcTemplate.query(query, new RouteRowMapper(), params.toArray());
             return new Result(routes, true);
@@ -87,9 +89,9 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
 
         try {
             if (date.length() == 0)
-                routes = jdbcTemplate.query("SELECT * FROM ROUTE WHERE DEPARTURE_DATE = (SELECT MIN(DEPARTURE_DATE) FROM ROUTE)", new RouteRowMapper());
+                routes = jdbcTemplate.query("SELECT * FROM ROUTE WHERE DEPARTURE_DATE = (SELECT MIN(DEPARTURE_DATE) FROM ROUTE) ORDER BY DEPARTURE_DATE, DEPARTURE_TIME", new RouteRowMapper());
             else
-                routes = jdbcTemplate.query("SELECT * FROM ROUTE WHERE DEPARTURE_DATE = ?", new RouteRowMapper(), LocalDate.parse(date).plusDays(1));
+                routes = jdbcTemplate.query("SELECT * FROM ROUTE WHERE DEPARTURE_DATE = ? ORDER BY DEPARTURE_DATE, DEPARTURE_TIME", new RouteRowMapper(), LocalDate.parse(date).plusDays(1));
 
             // маршруты не найдены
             if (routes.isEmpty()) {
@@ -109,8 +111,9 @@ public class SearchRouteRepositoryImpl implements SearchRouteRepository {
     // проверить количество свободных мест
     public int getPlaceByRouteId(int routeId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT (ROUTE.PLACES - COUNT(TICKET.ID)) AS FREE_PLACES FROM ROUTE LEFT JOIN TICKET ON ROUTE.ID = TICKET.ROUTE WHERE ROUTE.ID = ?", Integer.class, routeId);
-        } catch (DataAccessException exception) {
+            int result = jdbcTemplate.queryForObject("SELECT (ROUTE.PLACES - COUNT(TICKET.ID)) AS FREE_PLACES FROM ROUTE LEFT JOIN TICKET ON ROUTE.ID = TICKET.ROUTE WHERE ROUTE.ID = ?", Integer.class, routeId);
+            return result;
+        } catch (DataAccessException | NullPointerException exception) {
             return -1;
         }
     }

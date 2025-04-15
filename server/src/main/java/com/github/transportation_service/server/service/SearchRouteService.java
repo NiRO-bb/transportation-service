@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -44,27 +42,12 @@ public class SearchRouteService {
         route.setTransport(transport);
 
         // получить список маршрутов из БД на основе введенных параметров
-        Result result = searchRouteRepository.getRouteByParams(route);
-        if (result.isCorrect()) {
-
-            // сортировать список маршрутов (по времени - датам)
-            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureTime));
-            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureDate));
-        }
-        return result;
+        return searchRouteRepository.getRouteByParams(route);
     }
 
     // получить список всех маршрутов по дате
     public Result searchGlobal(String date) {
-
-        Result result = searchRouteRepository.getRouteByDate(date);
-
-        if (result.isCorrect()) {
-            // сортировать список маршрутов (по времени - датам)
-            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureTime));
-            Collections.sort((List<Route>) result.getData(), Comparator.comparing(Route::getDepartureDate));
-        }
-        return result;
+        return searchRouteRepository.getRouteByDate(date);
     }
 
     // получить количество свободных мест маршрута

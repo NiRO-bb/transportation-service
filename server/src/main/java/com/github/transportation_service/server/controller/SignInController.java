@@ -33,7 +33,7 @@ public class SignInController {
         if (result.isCorrect()) {
             if ((boolean) result.getData())
                 return new ResponseEntity<>(true, HttpStatus.OK);
-            return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Вы неверно указали логин и/или пароль!"), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Вы неверно указали логин и/или пароль!"), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("При попытке авторизоваться произошла ошибка (ошибка сервера)"), HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
     }

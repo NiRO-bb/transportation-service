@@ -44,7 +44,7 @@ public class TicketController {
             List<Ticket> tickets = (List<Ticket>) result.getData();
             if (!tickets.isEmpty())
                 return new ResponseEntity<>(tickets, HttpStatus.OK);
-            return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Список ваших забронированных билетов пуст"), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Список ваших забронированных билетов пуст"), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Не удалось получить список забронированных билетов (ошибка сервера)"), HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
     }

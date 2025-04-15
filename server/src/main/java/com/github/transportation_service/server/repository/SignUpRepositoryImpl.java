@@ -19,8 +19,11 @@ public class SignUpRepositoryImpl implements SignUpRepository {
             // хэширование пароля
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-            int result = jdbcTemplate.update("INSERT INTO USER VALUES(?, ?)", user.getLogin(), encoder.encode(user.getPassword()));
-            return new Result(result > 0, true);
+            int count = jdbcTemplate.queryForObject("SELECT COUNT(LOGIN) FROM USER WHERE LOGIN = ?", Integer.class, user.getLogin());
+            if (count == 0)
+                jdbcTemplate.update("INSERT INTO USER VALUES(?, ?)", user.getLogin(), encoder.encode(user.getPassword()));
+
+            return new Result(count == 0, true);
         } catch (DataAccessException exception) {
             return new Result(null, false);
         }

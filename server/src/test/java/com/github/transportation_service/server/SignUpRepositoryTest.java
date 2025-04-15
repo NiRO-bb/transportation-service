@@ -1,7 +1,6 @@
 package com.github.transportation_service.server;
 
 import com.github.transportation_service.server.repository.Result;
-import com.github.transportation_service.server.repository.SignInRepository;
 import com.github.transportation_service.server.repository.SignUpRepository;
 import com.github.transportation_service.server.repository.entity.User;
 import org.junit.jupiter.api.AfterEach;
@@ -17,27 +16,21 @@ import org.springframework.test.context.ActiveProfiles;
 public class SignUpRepositoryTest {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    SignUpRepository r;
 
-    @Autowired
-    SignUpRepository signUpRepository;
-    @Autowired
-    SignInRepository signInRepository;
-
-    // addUser()
     @Test
-    public void shouldAddUserToDB() {
-        Assertions.assertFalse((boolean) signInRepository.isUserExist("user").getData());
-
-        Result result = signUpRepository.addUser(new User("user", "user"));
-        Assertions.assertTrue(result.isCorrect());
+    public void testAddUser() {
+        // корректные параметры
+        Result result = r.addUser(new User("login", "password"));
         Assertions.assertTrue((boolean) result.getData());
 
-        Assertions.assertTrue((boolean) signInRepository.isUserExist("user").getData());
+        // неуникальный логин
+        result = r.addUser(new User("login", "password"));
+        Assertions.assertFalse((boolean) result.getData());
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown(@Autowired JdbcTemplate jdbcTemplate) {
         jdbcTemplate.update("DELETE FROM USER");
     }
 }

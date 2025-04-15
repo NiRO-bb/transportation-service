@@ -85,7 +85,7 @@ public class SearchRouteController {
             if (!routes.isEmpty())
                 return new ResponseEntity<>(routes, HttpStatus.OK);
             else
-                return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Маршрутов нет"), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Маршрутов нет"), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
         else
             return new ResponseEntity<>(new ErrorResponse(Collections.singletonList("Не удалось получить маршруты (ошибка сервера)"), HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -18,6 +18,7 @@ public class TicketService {
 
     // забронировать билет
     public boolean bookTicket(Ticket ticket) {
+        // проверка на наличие свободных мест
         if (searchRouteRepository.getPlaceByRouteId(ticket.getRoute()) > 0)
             return ticketRepository.addTicket(ticket) > 0;
         return false;

@@ -40,31 +40,62 @@ function buttonFunction() {
 }
 
 // отобразить билеты пользователя
-async function displayTickets() {
+function displayTickets() {
     textField.innerHTML = '<div class="header"><b>РЕЗУЛЬТАТ ПОИСКА</b></div>';
 
     try {
         // HTTP-запрос - список забронированных билетов пользователя
-        const ticketsResponse = await fetch(`http://localhost:8080/ticket/getTickets?userLogin=${document.getElementById('userLogin').value}`);
-        const ticketsData = await ticketsResponse.json();
+        fetch(`http://localhost:8080/ticket/getTickets?userLogin=${document.getElementById('userLogin').value}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json()
+                        .then(error => {
+                            throw {
+                                message: error.message,
+                                status: error.status
+                            }
+                        });
+                }
+                return response.json();
+            })
+            .then(ticketsData => {
+                // HTTP-запрос - информация о маршруте по id
+                fetch(`http://localhost:8080/search/getRouteByLogin?userLogin=${document.getElementById('userLogin').value}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json()
+                                .then(error => {
+                                    throw {
+                                        message: error.message,
+                                        status: error.status
+                                    }
+                                });
+                        }
+                        return response.json();
+                    })
+                    .then(routesData => {
+                        if (ticketsData.length === 0) {
+                            textField.innerHTML += '<p>У Вас нет забронированных билетов.</p>';
+                            return;
+                        }
 
-        // HTTP-запрос - информация о маршруте по id
-        const routesResponse = await fetch(`http://localhost:8080/search/getRouteByLogin?userLogin=${document.getElementById('userLogin').value}`)
-        const routesData = await routesResponse.json();
+                        for (let ticket of ticketsData) {
+                            let route = routesData.find(route => route.id === ticket.route);
 
-        if (ticketsData.length === 0) {
-            textField.innerHTML += '<p>У Вас нет забронированных билетов.</p>';
-            return;
-        }
-
-        for (const ticket of ticketsData) {
-            const route = routesData.find(route => route.id === ticket.route);
-
-            if (route) {
-                textField.innerHTML += `<div class="result"><p>Номер билета: <b>${ticket.id}</b></p><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p></div>`;
-                textField.innerHTML += `<div class="buttonContainer"><p><button onclick="cancelBooking(${ticket.id})">ОТМЕНИТЬ БРОНЬ</p><div>`;
-            }
-        }
+                            if (route) {
+                                textField.innerHTML += `<div class="result"><p>Номер билета: <b>${ticket.id}</b></p><p>Маршрут: <b>${route.departurePoint} - ${route.arrivalPoint}</b></p><p>Дата и время отправления: <b>${route.departureDate} - ${route.departureTime}</b></p><p>Дата и время прибытия: <b>${route.arrivalDate} - ${route.arrivalTime}</b></p></div>`;
+                                textField.innerHTML += `<div class="buttonContainer"><p><button onclick="cancelBooking(${ticket.id})">ОТМЕНИТЬ БРОНЬ</p><div>`;
+                            }
+                        }
+                    });
+            })
+            .catch(error => {
+                notificationField.innerHTML = '';
+                error.message.forEach(msg => {
+                    console.log("Error:", msg);
+                    notificationField.innerHTML += `<p>${msg}</p>`;
+                });
+            });
     }
     catch (error) {
         console.log("Error:", error);

@@ -1,11 +1,9 @@
 package com.github.transportation_service.server;
 
+import com.github.transportation_service.server.repository.Result;
 import com.github.transportation_service.server.repository.TicketRepository;
 import com.github.transportation_service.server.repository.entity.Ticket;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,47 +16,61 @@ import java.util.List;
 public class TicketRepositoryTest {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private TicketRepository ticketRepository;
+    private TicketRepository r;
 
-    @BeforeEach
-    public void setUp() {
-        jdbcTemplate.update("DELETE FROM TICKET");
-        jdbcTemplate.update("INSERT INTO TICKET VALUES (1, 'test', 1)");
-        jdbcTemplate.update("INSERT INTO TICKET VALUES (2, 'test', 2)");
+
+    @BeforeAll
+    public static void setUp(@Autowired JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("INSERT INTO ROUTE VALUES (?, 'Авиа', 1, 'москва', 'казань', '2025-01-01', '01:00:00', '2025-01-02', '02:00:00')", 1);
+        jdbcTemplate.update("INSERT INTO USER VALUES ('login', 'password')");
+        jdbcTemplate.update("INSERT INTO USER VALUES ('login2', 'password')");
+        jdbcTemplate.update("INSERT INTO TICKET VALUES (?, 'login', 1)", 1);
     }
 
-    // addTicket()
     @Test
-    public void shouldAddTicketToDB() {
-        int result = ticketRepository.addTicket(new Ticket(0, "test", 3));
-        Assertions.assertTrue(result > 0);
+    public void testAddTicket() {
+        // корректные параметры
+        int result = r.addTicket(new Ticket(0, "login", 1));
+        Assertions.assertEquals(1, result);
 
-        List<Ticket> tickets = (List<Ticket>) ticketRepository.getTicketByUserLogin("test").getData();
-        Assertions.assertEquals(3, tickets.size());
+        // некорректный логин
+        result = r.addTicket(new Ticket(0, "invalid login", 1));
+        Assertions.assertEquals(0, result);
+
+        // некорректный маршрут
+        result = r.addTicket(new Ticket(0, "login", 0));
+        Assertions.assertEquals(0, result);
     }
 
-    // removeTicket()
     @Test
-    public void shouldRemoveTicketFromDB() {
-        int result = ticketRepository.removeTicket(2);
-        Assertions.assertTrue(result > 0);
+    public void testRemoveTicket() {
+        // корректные параметры
+        int result = r.removeTicket(1);
+        Assertions.assertEquals(1, result);
 
-        List<Ticket> tickets = (List<Ticket>) ticketRepository.getTicketByUserLogin("test").getData();
-        Assertions.assertEquals(1, tickets.size());
+        // некорректный билет
+        result = r.removeTicket(0);
+        Assertions.assertEquals(0, result);
     }
 
-    // getTicketByUserLogin()
     @Test
-    public void shouldReturnTicketList() {
-        List<Ticket> tickets = (List<Ticket>) ticketRepository.getTicketByUserLogin("test").getData();
+    public void testGetTicketByUserLogin() {
+        // корректные параметры
+        Result result = r.getTicketByUserLogin("login");
+        Assertions.assertEquals(1, ((List<Ticket>) result.getData()).size());
 
-        Assertions.assertEquals(2, tickets.size());
+        result = r.getTicketByUserLogin("login2");
+        Assertions.assertEquals(0, ((List<Ticket>) result.getData()).size());
+
+        // некорректный логин
+        result = r.getTicketByUserLogin("invalid login");
+        Assertions.assertFalse(result.isCorrect());
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    public static void tearDown(@Autowired JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("DELETE FROM ROUTE");
+        jdbcTemplate.update("DELETE FROM USER");
         jdbcTemplate.update("DELETE FROM TICKET");
     }
 }

@@ -18,7 +18,11 @@ public class TicketRepositoryImpl implements TicketRepository {
     // добавить билет в базу данных
     public int addTicket(Ticket ticket) {
         try {
-            return jdbcTemplate.update("INSERT INTO TICKET(USER_LOGIN, ROUTE) VALUES(?, ?)", ticket.getUserLogin(), ticket.getRoute());
+            // проверка на существование введенных логина и маршрута
+            String userLogin = jdbcTemplate.queryForObject("SELECT LOGIN FROM USER WHERE LOGIN = ?", String.class, ticket.getUserLogin());
+            int route = jdbcTemplate.queryForObject("SELECT ID FROM ROUTE WHERE ID = ?", Integer.class, ticket.getRoute());
+
+            return jdbcTemplate.update("INSERT INTO TICKET(USER_LOGIN, ROUTE) VALUES(?, ?)", userLogin, route);
         } catch (DataAccessException exception) {
             return 0;
         }
@@ -36,7 +40,10 @@ public class TicketRepositoryImpl implements TicketRepository {
     // получить билеты по id пользователя
     public Result getTicketByUserLogin(String userLogin) {
         try {
-            List<Ticket> tickets = jdbcTemplate.query("SELECT * FROM TICKET WHERE USER_LOGIN = ?", new TicketRowMapper(), userLogin);
+            // проверка на существование логина
+            String login = jdbcTemplate.queryForObject("SELECT LOGIN FROM USER WHERE LOGIN = ?", String.class, userLogin);
+
+            List<Ticket> tickets = jdbcTemplate.query("SELECT * FROM TICKET WHERE USER_LOGIN = ?", new TicketRowMapper(), login);
             return new Result(tickets, true);
         } catch (DataAccessException exception) {
             return new Result(null, false);

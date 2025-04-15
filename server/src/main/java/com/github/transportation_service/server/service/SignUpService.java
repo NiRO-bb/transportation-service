@@ -12,17 +12,9 @@ public class SignUpService {
 
     @Autowired
     SignUpRepository signUpRepository;
-    @Autowired
-    SignInRepository signInRepository;
 
     // зарегистрироваться
     public Result createAccount(User user) {
-        Result result = signInRepository.isUserExist(user.getLogin());
-        if (result.isCorrect()) {
-            if (!(boolean) result.getData())
-                return signUpRepository.addUser(user);
-            return new Result(false, true);
-        }
-        return result;
+        return signUpRepository.addUser(user);
     }
 }

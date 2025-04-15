@@ -15,41 +15,41 @@ import org.springframework.test.context.ActiveProfiles;
 public class SignInRepositoryTest {
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private SignInRepository r;
 
-    @Autowired
-    private SignInRepository signInRepository;
-    @Autowired
-    private SignUpRepository signUpRepository;
-
-    @BeforeEach
-    public void setUp() {
-        signUpRepository.addUser(new User("test", "test"));
+    @BeforeAll
+    public static void setUp(@Autowired SignUpRepository signUpRepository) {
+        signUpRepository.addUser(new User("login", "password"));
     }
 
-    // isUserExist() - params: String login
     @Test
-    public void shouldReturnTrueIfUserExistsByLogin() {
-        boolean result = (boolean) signInRepository.isUserExist("test").getData();
-        Assertions.assertTrue(result);
+    public void testIsUserExistByLogin() {
+        // корректные параметры
+        Result result = r.isUserExist("login");
+        Assertions.assertTrue((boolean) result.getData());
 
-        result = (boolean) signInRepository.isUserExist("test2").getData();
-        Assertions.assertFalse(result);
-    }
-
-    // isUserExist() - params: User user
-    @Test
-    public void shouldReturnTrueIfUserExistsByUserInfo() {
-        Result result = signInRepository.isUserExist(new User("test", "test"));
-        Assertions.assertTrue(result.isCorrect());
-
-        result = signInRepository.isUserExist(new User("test2", "test2"));
-        Assertions.assertTrue(result.isCorrect());
+        // некорректный логин
+        result = r.isUserExist("invalid login");
         Assertions.assertFalse((boolean) result.getData());
     }
 
-    @AfterEach
-    public void tearDown() {
+    @Test
+    public void testIsUserExistByInfo() {
+        // корректные параметры
+        Result result = r.isUserExist(new User("login", "password"));
+        Assertions.assertTrue((boolean) result.getData());
+
+        // некорректный пароль
+        result = r.isUserExist(new User("login", "invalid password"));
+        Assertions.assertFalse((boolean) result.getData());
+
+        // некорректный логин
+        result = r.isUserExist(new User("invalid login", "password"));
+        Assertions.assertFalse((boolean) result.getData());
+    }
+
+    @AfterAll
+    public static void tearDown(@Autowired JdbcTemplate jdbcTemplate) {
         jdbcTemplate.update("DELETE FROM USER");
     }
 }
