@@ -56,14 +56,14 @@ public class SearchRouteController {
 
         // проверка на соответствие шаблонам
         List<String> messages = new ArrayList<>();
-        if (!departureDate.equals("") && !departureDate.matches("\\d{4}-\\d{2}-\\d{2}"))
+        if (!departureDate.trim().equals("") && !departureDate.trim().matches("\\d{4}-\\d{2}-\\d{2}"))
             messages.add("Указанная дата не соответствует формату ГГГГ-ММ-ДД (например, 2024-12-31)");
-        if (!departureTime.equals("") && !departureTime.matches("\\d{2}:\\d{2}"))
+        if (!departureTime.trim().equals("") && !departureTime.trim().matches("\\d{2}:\\d{2}"))
             messages.add("Указанное время не соответствует формату ЧЧ:ММ (например, 09:00)");
         if (!messages.isEmpty())
             return new ResponseEntity<>(new ErrorResponse(messages, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
 
-        Result result = searchRouteService.searchCustom(transport, departurePoint, arrivalPoint, departureDate, departureTime);
+        Result result = searchRouteService.searchCustom(transport, departurePoint.trim(), arrivalPoint.trim(), departureDate.trim(), departureTime.trim());
         if (result.isCorrect()) {
             List<Route> routes = (List<Route>) result.getData();
             if (!routes.isEmpty())
